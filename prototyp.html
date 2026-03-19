@@ -234,10 +234,10 @@ body{
         <p style="margin-top:4px">Jan Novák · <span style="color:var(--gold);cursor:pointer">📞 Zavolat</span></p>
         <p>📍 Vinohradská 42, Praha 2 · <span style="color:var(--gold);cursor:pointer">Navigovat →</span></p>
       </div>
-      <div class="st"><div class="dot d"></div><div class="dot d"></div><div class="dot d"></div><div class="dot n"></div><div class="dot"></div><div class="dot"></div></div>
-      <div style="display:flex;justify-content:space-between;font-size:0.58rem;color:#555;margin-bottom:14px"><span>Přijato</span><span>Na cestě</span><span>Na místě</span><span style="color:var(--gold);font-weight:700">Diagnostika</span><span>Oprava</span><span>Protokol</span></div>
-      <div class="btn" onclick="toast('📸 Fotky odeslány — odhad se připravuje')">📸 Nahrát foto diagnostiky</div>
-      <div class="btn-o" onclick="go('estimate')">📝 Vyplnit odhad ceny</div>
+      <div class="st" id="j1-dots"><div class="dot d"></div><div class="dot d"></div><div class="dot d"></div><div class="dot n"></div><div class="dot"></div><div class="dot"></div></div>
+      <div id="j1-labels" style="display:flex;justify-content:space-between;font-size:0.58rem;color:#555;margin-bottom:14px"><span>Přijato</span><span>Na cestě</span><span>Na místě</span><span style="color:var(--gold);font-weight:700">Diagnostika</span><span>Oprava</span><span>Protokol</span></div>
+      <div class="btn" id="j1-btn" onclick="advanceJob1()">📸 Nahrát foto diagnostiky</div>
+      <div class="btn-o" id="j1-btn2" onclick="go('estimate')">📝 Vyplnit odhad ceny</div>
       <div class="sec" style="margin-top:16px">📋 Detail</div>
       <div class="c" style="padding:8px 12px">
         <div class="row"><span>Kategorie</span><span class="v">Instalace</span></div>
@@ -463,6 +463,46 @@ function go(id){
   if(id==='settle')document.getElementById('t-jobs').classList.add('on');
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';setTimeout(()=>{t.style.display='none'},2500)}
+// Job 1 state machine
+let j1step=0;
+const j1phases=[
+  {active:3,toast:'📸 Fotky odeslány',nextBtn:'✅ Odhad odeslán — zahájit opravu',showBtn2:true},
+  {active:4,toast:'✅ Odhad automaticky schválen — zahajte opravu',nextBtn:'🛠️ Oprava hotová — vyplnit protokol',showBtn2:false},
+  {active:5,toast:'🛠️ Oprava dokončena — vyplňte protokol',nextBtn:'📋 Protokol podepsán — přejít k vyúčtování',showBtn2:false},
+  {active:5,toast:'📋 Protokol podepsán klientem',nextBtn:null,showBtn2:false},
+];
+const j1names=['Přijato','Na cestě','Na místě','Diagnostika','Oprava','Protokol'];
+function advanceJob1(){
+  if(j1step>=j1phases.length-1){go('settle');return}
+  const phase=j1phases[j1step];
+  toast(phase.toast);
+  j1step++;
+  const next=j1phases[j1step];
+  // Update dots
+  const dotsEl=document.getElementById('j1-dots');
+  while(dotsEl.firstChild)dotsEl.removeChild(dotsEl.firstChild);
+  for(let i=0;i<6;i++){
+    const d=document.createElement('div');
+    d.className=i<next.active?'dot d':i===next.active?'dot n':'dot';
+    dotsEl.appendChild(d);
+  }
+  // Update labels
+  const labelsEl=document.getElementById('j1-labels');
+  while(labelsEl.firstChild)labelsEl.removeChild(labelsEl.firstChild);
+  j1names.forEach(function(n,i){
+    const s=document.createElement('span');
+    s.textContent=n;
+    if(i===next.active){s.style.color='var(--gold)';s.style.fontWeight='700'}
+    labelsEl.appendChild(s);
+  });
+  // Update buttons
+  const btnEl=document.getElementById('j1-btn');
+  const btn2El=document.getElementById('j1-btn2');
+  if(next.nextBtn){btnEl.textContent=next.nextBtn}
+  else{btnEl.textContent='🧾 Přejít k vyúčtování';btnEl.onclick=function(){go('settle')}}
+  btn2El.style.display=next.showBtn2?'':'none';
+}
+
 function showJobTab(which){
   const a=document.getElementById('jobs-active'),d=document.getElementById('jobs-done');
   const ta=document.getElementById('tab-active'),td=document.getElementById('tab-done');
