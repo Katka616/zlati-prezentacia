@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zlatí Řemeslníci — Aplikace pro řemeslníky</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════ RESET & BASE ═══════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: #080808;
+  color: #ede8df;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+
+/* ═══════════════ BRAND TOKENS ═══════════════ */
+:root {
+  --gold: #C9A84C;
+  --gold-light: #e8d06c;
+  --gold-dark: #aa771c;
+  --gold-glow: rgba(201, 168, 76, 0.22);
+  --gold-gradient: linear-gradient(135deg, #b89a3a, #d4b85c, #e8d06c);
+  --dark: #080808;
+  --dark-card: #111111;
+  --border: rgba(201, 168, 76, 0.12);
+  --border-strong: rgba(201, 168, 76, 0.25);
+  --text: #ede8df;
+  --text-muted: #8a847c;
+  --text-secondary: #b5afa6;
+  --success: #4ade80;
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+/* ═══════════════ NOISE TEXTURE ═══════════════ */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+/* ═══════════════ TYPOGRAPHY ═══════════════ */
+h1, h2, h3, .heading {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
+}
+.gold-text {
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ═══════════════ LAYOUT ═══════════════ */
+.container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+section { padding: 120px 0; position: relative; }
+@media (max-width: 768px) { section { padding: 72px 0; } }
+
+/* ═══════════════ SECTION DIVIDERS ═══════════════ */
+.gold-line {
+  width: 60px; height: 1px;
+  background: var(--gold-gradient);
+  margin: 0 auto 48px;
+  position: relative;
+}
+.gold-line::after {
+  content: '⚜';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--dark);
+  padding: 0 16px;
+  color: var(--gold);
+  font-size: 0.75rem;
+}
+
+/* ═══════════════ ANIMATIONS ═══════════════ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(48px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-48px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(48px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 var(--gold-glow); }
+  50% { box-shadow: 0 0 40px 12px var(--gold-glow); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+
+.anim { opacity: 0; }
+.anim.visible { animation-fill-mode: forwards; }
+.anim.up.visible { animation: fadeInUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.anim.left.visible { animation: fadeInLeft 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.anim.right.visible { animation: fadeInRight 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.d1 { animation-delay: 0.1s !important; }
+.d2 { animation-delay: 0.2s !important; }
+.d3 { animation-delay: 0.3s !important; }
+.d4 { animation-delay: 0.4s !important; }
+.d5 { animation-delay: 0.5s !important; }
+.d6 { animation-delay: 0.6s !important; }
+
+/* ═══════════════ NAVIGATION ═══════════════ */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 18px 0;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+nav.scrolled {
+  background: rgba(8, 8, 8, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 0;
+}
+nav .container { display: flex; align-items: center; justify-content: space-between; }
+.nav-logo {
+  font-family: 'Cinzel', serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1.5px solid rgba(201, 168, 76, 0.4);
+  flex-shrink: 0;
+  background: #080808;
+}
+.logo-circle img {
+  width: 200%;
+  height: 200%;
+  object-fit: cover;
+  object-position: 48% 38%;
+  display: block;
+  margin-left: -50%;
+  margin-top: -28%;
+}
+.logo-circle-lg {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(201, 168, 76, 0.3);
+  background: #080808;
+  margin: 0 auto 16px;
+}
+.logo-circle-lg img {
+  width: 200%;
+  height: 200%;
+  object-fit: cover;
+  object-position: 48% 38%;
+  display: block;
+  margin-left: -50%;
+  margin-top: -28%;
+}
+.nav-links { display: flex; gap: 36px; list-style: none; }
+.nav-links a {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: color 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.nav-links a:hover { color: var(--gold); }
+.nav-cta {
+  background: var(--gold-gradient);
+  color: #080808 !important;
+  padding: 10px 28px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  transition: all 0.3s;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.nav-cta:hover { transform: scale(1.04); box-shadow: 0 4px 24px var(--gold-glow); }
+@media (max-width: 768px) { .nav-links { display: none; } }
+
+/* ═══════════════ BUTTONS ═══════════════ */
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gold-gradient);
+  color: #080808;
+  padding: 16px 40px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  letter-spacing: 0.02em;
+  position: relative;
+  overflow: hidden;
+}
+.btn-gold::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  animation: shimmer 3s ease-in-out infinite;
+}
+.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 32px var(--gold-glow); }
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--gold);
+  padding: 16px 40px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 1.5px solid rgba(201, 168, 76, 0.4);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.btn-outline:hover { background: rgba(201, 168, 76, 0.08); border-color: var(--gold); transform: translateY(-2px); }
+.btn-gold.large { padding: 18px 52px; font-size: 1rem; animation: pulse-glow 3s ease-in-out infinite; }
+
+/* ═══════════════ HERO ═══════════════ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: 80px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -30%; right: -15%;
+  width: 70vw; height: 70vw;
+  background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 240px;
+  background: linear-gradient(to top, var(--dark), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+.hero-content {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 72px;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+@media (max-width: 968px) {
+  .hero-content { grid-template-columns: 1fr; text-align: center; gap: 48px; }
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(201, 168, 76, 0.08);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 7px 18px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 28px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.hero h1 {
+  font-size: clamp(2.6rem, 5.2vw, 4.2rem);
+  line-height: 1.1;
+  margin-bottom: 28px;
+  font-weight: 800;
+}
+.hero-sub {
+  font-size: 1.1rem;
+  line-height: 1.75;
+  color: var(--text-secondary);
+  margin-bottom: 44px;
+  max-width: 500px;
+}
+@media (max-width: 968px) { .hero-sub { margin: 0 auto 44px; } }
+.hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+@media (max-width: 968px) { .hero-buttons { justify-content: center; } }
+
+/* Phone mockup */
+.hero-visual { display: flex; justify-content: center; }
+.phone-mockup {
+  width: 290px;
+  height: 600px;
+  background: #0e0e0e;
+  border-radius: 42px;
+  border: 2px solid rgba(201, 168, 76, 0.2);
+  box-shadow:
+    0 40px 80px rgba(0,0,0,0.6),
+    0 0 80px rgba(201, 168, 76, 0.08),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  overflow: hidden;
+  position: relative;
+  animation: float 7s ease-in-out infinite;
+}
+.phone-notch {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100px; height: 24px;
+  background: #080808;
+  border-radius: 0 0 18px 18px;
+  z-index: 2;
+}
+.phone-screen {
+  width: 100%; height: 100%;
+  padding: 38px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.phone-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.phone-header h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  color: var(--gold);
+  font-weight: 700;
+}
+.phone-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(74, 222, 128, 0.12);
+  color: var(--success);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.62rem;
+  font-weight: 700;
+}
+.phone-status::before {
+  content: '';
+  width: 5px; height: 5px;
+  background: var(--success);
+  border-radius: 50%;
+}
+.phone-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 12px;
+}
+.phone-card-gold {
+  background: linear-gradient(135deg, rgba(201,168,76,0.1), rgba(201,168,76,0.03));
+  border-left: 3px solid var(--gold);
+  border-color: rgba(201,168,76,0.15);
+}
+.phone-card h4 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+.phone-card p {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+.phone-card .tag {
+  display: inline-block;
+  background: rgba(201, 168, 76, 0.12);
+  color: var(--gold);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.55rem;
+  font-weight: 700;
+  margin-top: 5px;
+}
+.phone-btn {
+  background: var(--gold-gradient);
+  color: #080808;
+  border: none;
+  border-radius: 10px;
+  padding: 9px;
+  font-weight: 800;
+  font-size: 0.7rem;
+  text-align: center;
+  margin-top: 2px;
+  letter-spacing: 0.04em;
+}
+.phone-tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+.phone-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.5rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.phone-tab.active { color: var(--gold); }
+.phone-tab-icon { font-size: 1rem; }
+
+/* ═══════════════ STATS BAR ═══════════════ */
+.stats-bar {
+  padding: 56px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+  text-align: center;
+}
+.stat-item h3 {
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  font-weight: 800;
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 6px;
+}
+.stat-item p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* ═══════════════ SECTION HEADERS ═══════════════ */
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+.section-label::before {
+  content: '';
+  width: 32px; height: 1px;
+  background: var(--gold-gradient);
+}
+.section-title {
+  font-size: clamp(1.9rem, 3.5vw, 2.9rem);
+  margin-bottom: 20px;
+  line-height: 1.15;
+  font-weight: 800;
+}
+.section-desc {
+  font-size: 1rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+  max-width: 560px;
+  margin-bottom: 64px;
+}
+
+/* ═══════════════ FEATURES ═══════════════ */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+@media (max-width: 968px) { .features-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .features-grid { grid-template-columns: 1fr; } }
+
+.feature-card {
+  background: var(--dark-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--gold-gradient);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.feature-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--border-strong);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.35), 0 0 32px rgba(201,168,76,0.04);
+}
+.feature-card:hover::before { opacity: 1; }
+.feature-icon {
+  width: 52px; height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(201, 168, 76, 0.07);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+.feature-card h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: 0;
+}
+.feature-card p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+/* ═══════════════ SPECIALIZATIONS ═══════════════ */
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  margin-top: 44px;
+}
+@media (max-width: 768px) { .spec-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 480px) { .spec-grid { grid-template-columns: repeat(2, 1fr); } }
+.spec-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: var(--dark-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 20px 8px;
+  transition: all 0.3s;
+  text-align: center;
+}
+.spec-chip:hover { border-color: var(--border-strong); transform: translateY(-3px); }
+.spec-chip .icon { font-size: 1.6rem; }
+.spec-chip span { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); }
+
+/* ═══════════════ HOW IT WORKS — TIMELINE ═══════════════ */
+.steps-timeline {
+  position: relative;
+  padding-left: 64px;
+}
+.steps-timeline::before {
+  content: '';
+  position: absolute;
+  left: 23px; top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--gold), rgba(201,168,76,0.05));
+}
+.step-item {
+  position: relative;
+  padding-bottom: 44px;
+}
+.step-item:last-child { padding-bottom: 0; }
+.step-number {
+  position: absolute;
+  left: -64px; top: 0;
+  width: 46px; height: 46px;
+  background: var(--dark);
+  border: 1.5px solid var(--gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--gold);
+  z-index: 1;
+}
+.step-content {
+  background: var(--dark-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  transition: border-color 0.3s;
+}
+.step-content:hover { border-color: var(--border-strong); }
+.step-content h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.step-content p {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+.step-badge {
+  display: inline-block;
+  background: rgba(201, 168, 76, 0.08);
+  border: 1px solid var(--border);
+  color: var(--gold);
+  padding: 5px 14px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin-top: 14px;
+  letter-spacing: 0.01em;
+}
+
+/* ═══════════════ BENEFITS ═══════════════ */
+.benefits-section {
+  background: linear-gradient(180deg, rgba(201,168,76,0.02), transparent 40%, transparent 60%, rgba(201,168,76,0.02));
+}
+.benefit-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 64px;
+  align-items: center;
+  margin-bottom: 88px;
+}
+.benefit-row:last-child { margin-bottom: 0; }
+.benefit-row.reverse { direction: rtl; }
+.benefit-row.reverse > * { direction: ltr; }
+@media (max-width: 768px) {
+  .benefit-row, .benefit-row.reverse { grid-template-columns: 1fr; direction: ltr; gap: 32px; margin-bottom: 56px; }
+}
+.benefit-visual {
+  background: var(--dark-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 48px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.benefit-visual::after {
+  content: '';
+  position: absolute;
+  top: -40%; left: -40%;
+  width: 180%; height: 180%;
+  background: radial-gradient(circle at center, rgba(201,168,76,0.05), transparent 55%);
+  pointer-events: none;
+}
+.benefit-emoji { font-size: 3.5rem; margin-bottom: 14px; position: relative; z-index: 1; }
+.benefit-visual h4 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.15rem;
+  color: var(--gold);
+  position: relative;
+  z-index: 1;
+  font-weight: 700;
+}
+.benefit-text h3 {
+  font-size: 1.5rem;
+  margin-bottom: 14px;
+  line-height: 1.25;
+  font-weight: 800;
+}
+.benefit-text p {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.75;
+  margin-bottom: 20px;
+}
+.benefit-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.benefit-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+.benefit-list li::before {
+  content: '✓';
+  color: var(--gold);
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+/* ═══════════════ COMPARISON TABLE ═══════════════ */
+.comparison-wrapper {
+  overflow-x: auto;
+  margin-top: 44px;
+  -webkit-overflow-scrolling: touch;
+}
+.comparison-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 600px;
+}
+.comparison-table th,
+.comparison-table td {
+  padding: 16px 24px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 0.88rem;
+}
+.comparison-table thead th {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--dark-card);
+  border-bottom: 1px solid var(--border);
+}
+.comparison-table thead th:first-child { border-radius: var(--radius-sm) 0 0 0; }
+.comparison-table thead th:last-child {
+  border-radius: 0 var(--radius-sm) 0 0;
+  background: rgba(201, 168, 76, 0.08);
+  color: var(--gold);
+}
+.comparison-table td { color: var(--text-muted); }
+.comparison-table td:last-child { background: rgba(201, 168, 76, 0.02); color: var(--text-secondary); }
+.comparison-table tbody tr:hover td { background: rgba(255,255,255,0.015); }
+.comparison-table tbody tr:hover td:last-child { background: rgba(201, 168, 76, 0.04); }
+.check { color: var(--success); font-weight: 700; }
+
+/* ═══════════════ QUOTE ═══════════════ */
+.quote-section {
+  text-align: center;
+  padding: 100px 0;
+  position: relative;
+}
+.quote-section::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(201,168,76,0.04), transparent 65%);
+  pointer-events: none;
+}
+.quote-mark {
+  font-family: 'Cinzel', serif;
+  font-size: 5rem;
+  color: var(--gold);
+  opacity: 0.15;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+.quote-text {
+  font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+  font-style: italic;
+  line-height: 1.7;
+  max-width: 720px;
+  margin: 0 auto 20px;
+  color: var(--text);
+  font-weight: 400;
+}
+.quote-author {
+  font-size: 0.85rem;
+  color: var(--gold);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+/* ═══════════════ DEMO CTA ═══════════════ */
+.demo-section { padding: 100px 0; }
+.demo-card {
+  background: linear-gradient(135deg, rgba(201,168,76,0.06), rgba(201,168,76,0.01));
+  border: 1px solid var(--border-strong);
+  border-radius: 24px;
+  padding: 64px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.demo-card::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, rgba(201,168,76,0.1), transparent 65%);
+  pointer-events: none;
+}
+.demo-card h2 { margin-bottom: 16px; position: relative; z-index: 1; }
+.demo-card > p {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  max-width: 540px;
+  margin: 0 auto 36px;
+  line-height: 1.75;
+  position: relative;
+  z-index: 1;
+}
+.demo-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 1;
+}
+@media (max-width: 600px) { .demo-steps { grid-template-columns: 1fr; } }
+.demo-step {
+  background: rgba(0,0,0,0.35);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 24px 20px;
+}
+.demo-step-num {
+  width: 34px; height: 34px;
+  background: var(--gold-gradient);
+  color: #080808;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  margin: 0 auto 12px;
+}
+.demo-step h4 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+.demo-step p { font-size: 0.78rem; color: var(--text-muted); margin: 0; line-height: 1.55; }
+.demo-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+/* ═══════════════ FAQ ═══════════════ */
+.faq-list {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.faq-item {
+  background: var(--dark-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.faq-item.open { border-color: var(--border-strong); }
+.faq-question {
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.92rem;
+  transition: color 0.3s;
+  gap: 16px;
+  user-select: none;
+}
+.faq-question:hover { color: var(--gold); }
+.faq-arrow {
+  font-size: 0.8rem;
+  color: var(--gold);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+}
+.faq-item.open .faq-arrow { transform: rotate(180deg); }
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1), padding 0.5s;
+  padding: 0 24px;
+}
+.faq-item.open .faq-answer { max-height: 300px; padding: 0 24px 20px; }
+.faq-answer p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.75; }
+
+/* ═══════════════ FOOTER ═══════════════ */
+footer {
+  padding: 40px 0;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+footer .footer-logo {
+  font-family: 'Cinzel', serif;
+  color: var(--gold);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: 0.04em;
+}
+footer p { font-size: 0.75rem; color: var(--text-muted); }
+
+/* ═══════════════ RESPONSIVE ═══════════════ */
+@media (max-width: 600px) {
+  .phone-mockup { width: 250px; height: 520px; }
+  .feature-card { padding: 24px 20px; }
+  .demo-card { padding: 36px 20px; }
+  .steps-timeline { padding-left: 52px; }
+  .step-number { left: -52px; width: 40px; height: 40px; font-size: 0.9rem; }
+  .steps-timeline::before { left: 19px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<nav id="navbar">
+  <div class="container">
+    <a href="https://www.zlatiremeslnici.com" target="_blank" class="nav-logo">
+      <div class="logo-circle"><img src="logo.png" alt="Zlatí Řemeslníci"></div>
+      Zlatí Řemeslníci
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Funkce</a></li>
+      <li><a href="#how">Jak to funguje</a></li>
+      <li><a href="#benefits">Výhody</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a href="#demo" class="nav-cta">Vyzkoušet →</a>
+  </div>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero" id="top">
+  <div class="container">
+    <div class="hero-content">
+      <div>
+        <h1 class="anim up">
+          Jsme zpět.<br>
+          <span class="gold-text">S aplikací, která vám ušetří hodiny.</span>
+        </h1>
+        <p class="hero-sub anim up d2">
+          Zlatí Řemeslníci se vracejí na trh — s vlastní aplikací, přímými zakázkami
+          a podmínkami, které už známe. Žádné papírování, žádné telefonáty.
+          Vše v jednom mobilu.
+        </p>
+        <div class="hero-buttons anim up d3">
+          <a href="#demo" class="btn-gold">Vyzkoušet aplikaci →</a>
+          <a href="#how" class="btn-outline">Jak to funguje</a>
+        </div>
+      </div>
+      <div class="hero-visual anim right d2">
+        <div class="phone-mockup">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="phone-header">
+              <h3 style="display:flex;align-items:center;gap:6px;"><span class="logo-circle" style="width:22px;height:22px;border-width:1px;"><img src="logo.png" alt=""></span> Zlatí Řemeslníci</h3>
+              <div class="phone-status">Dostupný</div>
+            </div>
+            <div class="phone-card">
+              <h4>☀️ Přehled dne</h4>
+              <p>3 zakázky dnes · Další: 10:30, Praha 4</p>
+            </div>
+            <div class="phone-card phone-card-gold">
+              <h4>🔧 Oprava vodovodní baterie</h4>
+              <p>Jan Novák<br>📍 Vinohradská 42, Praha 2</p>
+              <div class="tag">12.4 km · Instalace</div>
+            </div>
+            <div class="phone-btn">⚡ Jsem na cestě</div>
+            <div class="phone-card">
+              <h4>📋 Marketplace</h4>
+              <p>2 nové nabídky ve vašem okolí</p>
+            </div>
+            <div class="phone-tabs">
+              <div class="phone-tab active"><div class="phone-tab-icon">⚡</div>Domů</div>
+              <div class="phone-tab"><div class="phone-tab-icon">🏪</div>Nabídky</div>
+              <div class="phone-tab"><div class="phone-tab-icon">📋</div>Zakázky</div>
+              <div class="phone-tab"><div class="phone-tab-icon">📅</div>Kalendář</div>
+              <div class="phone-tab"><div class="phone-tab-icon">💬</div>Chat</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ STATS ═══════════════ -->
+<section class="stats-bar">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item anim up">
+        <h3>15s</h3>
+        <p>Aktualizace v reálném čase</p>
+      </div>
+      <div class="stat-item anim up d2">
+        <h3>0 Kč</h3>
+        <p>Žádné poplatky za aplikaci ani zakázky</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ STORY ═══════════════ -->
+<section style="padding: 100px 0; border-bottom: 1px solid var(--border);">
+  <div class="container" style="max-width: 760px;">
+    <div class="section-label anim up" style="justify-content: center; display: flex;">Kdo jsme</div>
+    <h2 class="section-title anim up d1" style="text-align: center;">
+      Známá tvář. <span class="gold-text">Nová kapitola.</span>
+    </h2>
+    <div class="anim up d2" style="font-size: 1rem; color: var(--text-secondary); line-height: 1.85; text-align: center; max-width: 680px; margin: 0 auto;">
+      <p style="margin-bottom: 20px;">
+        Mnozí z vás nás znáte z doby spolupráce s Hodinovým Manželem. Pojistné zakázky,
+        havarijní opravy, osvědčené postupy — to vše jsme budovali společně.
+      </p>
+      <p style="margin-bottom: 20px;">
+        Dnes se vracíme jako <strong style="color: var(--text);">Zlatí Řemeslníci</strong> —
+        samostatná společnost pod vedením
+        <strong style="color: var(--text);">Kataríny Lacinové</strong>, bývalé ředitelky
+        pojistného oddělení Hodinového Manžela. Stejné know-how,
+        nová značka a vlastní technologie.
+      </p>
+      <p style="margin-bottom: 28px;">
+        Zakázky od pojišťoven budou přicházet přímo od nás a řešit se přes tuto aplikaci.
+        <strong style="color: var(--text);">Podmínky, které jsme si dříve dojednali, zůstávají v platnosti.</strong>
+      </p>
+      <div style="display: inline-flex; align-items: center; gap: 14px; background: rgba(201,168,76,0.06); border: 1px solid var(--border); border-radius: 50px; padding: 10px 24px;">
+        <div style="width: 40px; height: 40px; background: var(--gold-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #080808; font-size: 0.85rem;">KL</div>
+        <div style="text-align: left;">
+          <div style="font-weight: 700; font-size: 0.88rem; color: var(--text);">Katarína Lacinová</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">Ředitelka · Zlatí Řemeslníci s.r.o.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FEATURES ═══════════════ -->
+<section id="features">
+  <div class="container">
+    <div class="section-label anim up">Funkce</div>
+    <h2 class="section-title anim up d1">
+      Vše v jednom.<br>
+      <span class="gold-text">Nic navíc.</span>
+    </h2>
+    <p class="section-desc anim up d2">
+      Konec papírů, telefonátů a ztracených faktur. Jedna aplikace pro celou zakázku.
+    </p>
+
+    <div class="features-grid">
+      <div class="feature-card anim up d1">
+        <div class="feature-icon">🏪</div>
+        <h3>Nabídky zakázek</h3>
+        <p>Vidíte typ závady, fotky od klienta, typ nemovitosti, adresu i vzdálenost. Víte přesně, do čeho jdete — ještě před přijetím.</p>
+      </div>
+      <div class="feature-card anim up d2">
+        <div class="feature-icon">⚡</div>
+        <h3>Jeden krok, jedno tlačítko</h3>
+        <p>Na každém kroku zakázky jedno jasné tlačítko. Od „Jsem na cestě" po podpis protokolu. Žádné hledání v menu.</p>
+      </div>
+      <div class="feature-card anim up d3">
+        <div class="feature-icon">📅</div>
+        <h3>Kalendář</h3>
+        <p>Denní a týdenní pohled. Blokujte dovolené, osobní čas. Přehledně vidíte, co vás čeká.</p>
+      </div>
+      <div class="feature-card anim up d1">
+        <div class="feature-icon">📋</div>
+        <h3>Digitální protokol</h3>
+        <p>Průvodce krok za krokem. Popište práci hlasem, vyfotografujte, podepište na obrazovce. Hotovo za minuty.</p>
+      </div>
+      <div class="feature-card anim up d2">
+        <div class="feature-icon">💰</div>
+        <h3>Vyúčtování bez tabulek</h3>
+        <p>Systém spočítá odměnu z odpracovaných hodin, kilometrů a materiálu. Automaticky, přesně.</p>
+      </div>
+      <div class="feature-card anim up d3">
+        <div class="feature-icon">🧾</div>
+        <h3>Faktura jedním klikem</h3>
+        <p>Systém vygeneruje fakturu s QR kódem. Nebo nahrajte vlastní. Platba na váš účet pravidelně.</p>
+      </div>
+      <div class="feature-card anim up d1">
+        <div class="feature-icon">💬</div>
+        <h3>Chat místo telefonátů</h3>
+        <p>Pište dispečerovi, když vám to vyhovuje. Ke každé zakázce vlastní vlákno. Hlasové zprávy.</p>
+      </div>
+      <div class="feature-card anim up d2">
+        <div class="feature-icon">📊</div>
+        <h3>Vaše statistiky</h3>
+        <p>Hodnocení, počet zakázek, úspěšnost. Vše na jednom místě. Budujte si jméno.</p>
+      </div>
+      <div class="feature-card anim up d3">
+        <div class="feature-icon">📡</div>
+        <h3>Funguje i offline</h3>
+        <p>V suterénu bez signálu? Pracujte dál. Data se odešlou automaticky, jakmile jste zpět online.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SPECIALIZATIONS ═══════════════ -->
+<section style="padding: 64px 0;">
+  <div class="container" style="text-align: center;">
+    <div class="section-label" style="justify-content: center;">Obory</div>
+    <h2 class="section-title anim up" style="text-align: center;">Zakázky pro všechny řemesla</h2>
+    <div class="spec-grid anim up d2">
+      <div class="spec-chip"><div class="icon">🔧</div><span>Instalatér</span></div>
+      <div class="spec-chip"><div class="icon">⚡</div><span>Elektrikář</span></div>
+      <div class="spec-chip"><div class="icon">🔥</div><span>Plynař</span></div>
+      <div class="spec-chip"><div class="icon">🌡️</div><span>Topenář</span></div>
+      <div class="spec-chip"><div class="icon">🔑</div><span>Zámečník</span></div>
+      <div class="spec-chip"><div class="icon">🚿</div><span>Kanalizace</span></div>
+      <div class="spec-chip"><div class="icon">🧊</div><span>Klimatizace</span></div>
+      <div class="spec-chip"><div class="icon">☀️</div><span>Solární panely</span></div>
+      <div class="spec-chip"><div class="icon">🏠</div><span>Tepelná čerpadla</span></div>
+      <div class="spec-chip"><div class="icon">🐛</div><span>Deratizace</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ HOW IT WORKS ═══════════════ -->
+<section id="how">
+  <div class="container">
+    <div class="section-label anim up">Postup</div>
+    <h2 class="section-title anim up d1">
+      Od zakázky k faktuře<br>
+      <span class="gold-text">za pár kliknutí</span>
+    </h2>
+    <p class="section-desc anim up d2">
+      Celý proces běží v aplikaci. Žádné papíry, žádné emaily, žádné tabulky.
+    </p>
+
+    <div class="steps-timeline">
+      <div class="step-item anim left">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h3>📲 Přijde nabídka</h3>
+          <p>Zakázka se objeví ve vašem Marketplace s kompletním popisem: typ závady, fotky od klienta, vzdálenost, dostupné termíny. Kliknete „Přijmout" — zakázka je vaše.</p>
+          <div class="step-badge">Nabídky podle vaší lokality a specializace</div>
+        </div>
+      </div>
+      <div class="step-item anim left d1">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h3>🚗 Jedete na místo</h3>
+          <p>Stisknete „Jsem na cestě" — navigace jedním klikem. Zákazník vidí, že jste na cestě. Vy vidíte adresu, telefon, detail závady.</p>
+          <div class="step-badge">Zákazník ví, že jdete — bez telefonátů</div>
+        </div>
+      </div>
+      <div class="step-item anim left d2">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h3>🔍 Diagnostika a odhad</h3>
+          <p>Vyfotíte závadu, vyplníte odhad. Buď se schválí automaticky a výsledek uvidíte ihned, nebo — pokud je potřeba doplatok — odešle se klientovi ke schválení přes portál. Jakmile klient schválí, dostanete notifikaci.</p>
+          <div class="step-badge">Hlasová diktace — popište práci vlastními slovy</div>
+        </div>
+      </div>
+      <div class="step-item anim left d3">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <h3>🛠️ Opravujete</h3>
+          <p>Soustřeďte se na práci. Vyjednávání o ceně s klientem u něj doma? To je minulost. Vše řeší aplikace diskrétně přes portál — schválení, komunikaci i doplatky.</p>
+          <div class="step-badge">Žádné telefonáty o ceně — vše vyřídí aplikace</div>
+        </div>
+      </div>
+      <div class="step-item anim left d4">
+        <div class="step-number">5</div>
+        <div class="step-content">
+          <h3>📋 Protokol a podpis</h3>
+          <p>Průvodce vás provede: info o zakázce → návštěvy → práce + materiál → fotografie → checklist. Zákazník podepíše na vašem mobilu nebo přes odkaz na portálu.</p>
+          <div class="step-badge">Digitální podpis — konec papírových formulářů</div>
+        </div>
+      </div>
+      <div class="step-item anim left d5">
+        <div class="step-number">6</div>
+        <div class="step-content">
+          <h3>🧾 Faktura</h3>
+          <p>Systém spočítá odměnu a vygeneruje fakturu s QR kódem. Zadáte vlastní variabilní symbol a QR kód pro nahrání do vašeho fakturačního systému. Peníze na vašem účtu pravidelně.</p>
+          <div class="step-badge">Vlastní VS + QR kód pro váš fakturační systém</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ BENEFITS ═══════════════ -->
+<section id="benefits" class="benefits-section">
+  <div class="container">
+    <div class="section-label anim up">Proč my</div>
+    <h2 class="section-title anim up d1">
+      Výhody, které <span class="gold-text">pocítíte hned</span>
+    </h2>
+    <p class="section-desc anim up d2">
+      Méně administrativy. Více času na práci, která vás živí.
+    </p>
+
+    <div class="benefit-row">
+      <div class="benefit-visual anim left">
+        <div class="benefit-emoji">🎯</div>
+        <h4>Zakázky blízko vás</h4>
+      </div>
+      <div class="benefit-text anim right">
+        <h3>Víte, kam jedete — dřív, než přijmete</h3>
+        <p>Ke každé nabídce vidíte přesnou vzdálenost. Systém vám nabízí zakázky podle vaší polohy a specializace — a ukáže, jestli je nějaká poblíž té, kterou už máte v kalendáři.</p>
+        <ul class="benefit-list">
+          <li>Párování podle lokality a oboru</li>
+          <li>Upozornění na blízké zakázky</li>
+          <li>Méně cestování, více práce za den</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="benefit-row reverse">
+      <div class="benefit-visual anim right">
+        <div class="benefit-emoji">🤝</div>
+        <h4>Konec nepříjemných rozhovorů</h4>
+      </div>
+      <div class="benefit-text anim left">
+        <h3>O ceně se nemusíte bavit vy</h3>
+        <p>Žádné vyjednávání s klientem v jeho obýváku. Odhad zadáte do aplikace, schválení proběhne automaticky nebo přes klientský portál. Vy řešíte opravu, ne peníze.</p>
+        <ul class="benefit-list">
+          <li>Odhad odešlete jedním klikem</li>
+          <li>Doplatok schvaluje klient přes portál</li>
+          <li>Výsledek vidíte jako notifikaci v aplikaci</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="benefit-row">
+      <div class="benefit-visual anim left">
+        <div class="benefit-emoji">📱</div>
+        <h4>Jedno tlačítko</h4>
+      </div>
+      <div class="benefit-text anim right">
+        <h3>Nulová administrativa v terénu</h3>
+        <p>Na každém kroku jedno tlačítko, které vás posune dál. Popište práci hlasem, vyfotografujte jedním klikem, materiál vyberte z katalogu. Žádné formuláře, žádné tabulky.</p>
+        <ul class="benefit-list">
+          <li>Hlasová diktace — mluvíte, ne píšete</li>
+          <li>Fotky přímo v aplikaci</li>
+          <li>Katalog materiálů s napovídáním</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="benefit-row reverse">
+      <div class="benefit-visual anim right">
+        <div class="benefit-emoji">📁</div>
+        <h4>Kompletní archiv</h4>
+      </div>
+      <div class="benefit-text anim left">
+        <h3>Celá historie zakázek — vždy po ruce</h3>
+        <p>Každá zakázka, kterou jste kdy udělali, zůstává v aplikaci. S kompletními podklady — protokoly, fotografie, vyúčtování, faktury. Žádné hledání v emailech nebo šanonech.</p>
+        <ul class="benefit-list">
+          <li>Všechny zakázky na jednom místě — aktivní i dokončené</li>
+          <li>Protokoly, fotky a faktury u každé zakázky</li>
+          <li>Stáhněte si PDF kdykoliv potřebujete</li>
+          <li>Přehled pro vaše účetnictví i pro reklamace</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="benefit-row">
+      <div class="benefit-visual anim left">
+        <div class="benefit-emoji">🗓️</div>
+        <h4>Vaše pravidla</h4>
+      </div>
+      <div class="benefit-text anim left">
+        <h3>Rozhodujete, kdy pracujete</h3>
+        <p>Nastavte si pracovní hodiny, blokujte víkendy nebo dovolené. Aplikace nabízí zakázky jen v čase, kdy jste k dispozici.</p>
+        <ul class="benefit-list">
+          <li>Pracovní hodiny po dnech</li>
+          <li>Blokovací čas — dovolená, osobní, údržba</li>
+          <li>Přehledný denní a týdenní pohled</li>
+          <li>Zakázky jen ve vašich volných slotoch</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ COMPARISON ═══════════════ -->
+<section>
+  <div class="container">
+    <div style="text-align: center;">
+      <div class="section-label" style="justify-content: center;">Porovnání</div>
+      <h2 class="section-title anim up" style="text-align: center;">
+        S aplikací vs. <span class="gold-text">bez ní</span>
+      </h2>
+    </div>
+    <div class="comparison-wrapper anim up d2">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Klasicky</th>
+            <th>⚜ Zlatí Řemeslníci</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Příjem zakázek</td>
+            <td>Telefonáty, SMS, emaily</td>
+            <td><span class="check">✓</span> Push notifikace do mobilu</td>
+          </tr>
+          <tr>
+            <td>Navigace</td>
+            <td>Ruční zadání adresy</td>
+            <td><span class="check">✓</span> Jedno kliknutí → mapa</td>
+          </tr>
+          <tr>
+            <td>Servisní protokol</td>
+            <td>Papírový formulář</td>
+            <td><span class="check">✓</span> Digitální průvodce + hlas</td>
+          </tr>
+          <tr>
+            <td>Podpis zákazníka</td>
+            <td>Papír nebo žádný</td>
+            <td><span class="check">✓</span> Digitální podpis na mobilu</td>
+          </tr>
+          <tr>
+            <td>Fotodokumentace</td>
+            <td>Vlastní mobil, posílání emailem</td>
+            <td><span class="check">✓</span> Přímo v aplikaci, automaticky u zakázky</td>
+          </tr>
+          <tr>
+            <td>Fakturace</td>
+            <td>Účetní software, ruční vyplnění</td>
+            <td><span class="check">✓</span> Automatická faktura s QR</td>
+          </tr>
+          <tr>
+            <td>Cena s klientem</td>
+            <td>Vyjednávání u něj doma</td>
+            <td><span class="check">✓</span> Řeší aplikace diskrétně</td>
+          </tr>
+          <tr>
+            <td>Komunikace</td>
+            <td>Telefonáty při práci</td>
+            <td><span class="check">✓</span> Chat — odpovíte, když chcete</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════ DEMO ═══════════════ -->
+<section id="demo" class="demo-section">
+  <div class="container">
+    <div class="demo-card anim up">
+      <h2>Vyzkoušejte si to <span class="gold-text">sami</span></h2>
+      <p>
+        Připravili jsme cvičnou verzi s ukázkovými zakázkami. Projděte si celý proces od nabídky po fakturu. Bez registrace, bez závazků.
+      </p>
+
+      <div class="demo-steps">
+        <div class="demo-step anim up d1">
+          <div class="demo-step-num">1</div>
+          <h4>Otevřete odkaz</h4>
+          <p>Aplikace se otevře přímo v prohlížeči vašeho telefonu.</p>
+        </div>
+        <div class="demo-step anim up d2">
+          <div class="demo-step-num">2</div>
+          <h4>Prozkoumejte</h4>
+          <p>Marketplace, kalendář, chat, protokol — vše s testovacími daty.</p>
+        </div>
+        <div class="demo-step anim up d3">
+          <div class="demo-step-num">3</div>
+          <h4>Ozvěte se nám</h4>
+          <p>Líbí se vám to? Zavolejte a začnete přijímat reálné zakázky.</p>
+        </div>
+      </div>
+
+      <div class="demo-buttons">
+        <a href="https://zlati-remeslnici.vercel.app/dispatch" target="_blank" class="btn-gold large">
+          Spustit demo →
+        </a>
+        <a href="tel:+420228222061" class="btn-outline">
+          📞 +420 228 222 061
+        </a>
+        <a href="https://wa.me/421903328882" target="_blank" class="btn-outline">
+          💬 WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FAQ ═══════════════ -->
+<section id="faq">
+  <div class="container">
+    <div style="text-align: center;">
+      <div class="section-label" style="justify-content: center;">FAQ</div>
+      <h2 class="section-title anim up" style="text-align: center; margin-bottom: 44px;">
+        Časté otázky
+      </h2>
+    </div>
+
+    <div class="faq-list">
+      <div class="faq-item anim up">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Jaký je vztah Zlatých Řemeslníků k Hodinovému Manželovi?
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          <p>Zlatí Řemeslníci jsou samostatná společnost vedená Katarínou Lacinovou, která dříve řídila pojistné oddělení Hodinového Manžela. Oddělili jsme se a vracíme se na trh s vlastní značkou, vlastní technologií a přímými zakázkami. Pokud jste s námi spolupracovali dříve — podmínky, které jsme si dojednali, zůstávají v platnosti.</p>
+        </div>
+      </div>
+      <div class="faq-item anim up d1">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Odkud budou přicházet zakázky?
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          <p>Zakázky přicházejí přímo od Zlatých Řemeslníků. Máme vlastní smlouvy s pojišťovnami a asistenčními společnostmi. Všechny zakázky jsou řešeny přes naši aplikaci — od přijetí po fakturaci.</p>
+        </div>
+      </div>
+      <div class="faq-item anim up d2">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Musím si aplikaci stahovat z obchodu?
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          <p>Ne. Aplikace běží přímo v prohlížeči. Stačí otevřít odkaz a „Přidat na plochu" — funguje jako běžná appka, ale bez stahování z App Store nebo Google Play.</p>
+        </div>
+      </div>
+      <div class="faq-item anim up d1">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Je aplikace zdarma?
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          <p>Ano. Za aplikaci ani za přijaté zakázky neplatíte nic. Žádné provize, žádné procento z výdělku. Je součástí spolupráce se Zlatými Řemeslníky.</p>
+        </div>
+      </div>
+      <div class="faq-item anim up d2">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Mohu si vybírat zakázky?
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          <p>Samozřejmě. V Marketplace vidíte nabídky podle vaší specializace a lokality — s kompletním detailem. Vy rozhodujete, co přijmete a co odmítnete.</p>
+        </div>
+      </div>
+      <div class="faq-item anim up d3">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Funguje offline?
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          <p>Ano. Zakázky a profil se ukládají lokálně. Protokol, fotky i změny stavu se odešlou automaticky, jakmile budete zase online.</p>
+        </div>
+      </div>
+      <div class="faq-item anim up d4">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Jak rychle dostanu zaplaceno?
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          <p>Platby probíhají pravidelně. Po schválení protokolu systém vygeneruje fakturu a zařadí ji do platební dávky. Peníze přijdou na váš účet převodem.</p>
+        </div>
+      </div>
+      <div class="faq-item anim up d5">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Co potřebuji k registraci?
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          <p>Potřebujete platné podnikatelské oprávnění v oboru (živnostenský list nebo obdobný doklad). Při registraci vyplníte základní fakturační údaje a doklady nahrajete přímo v aplikaci — jednoduše, bez papírování.</p>
+        </div>
+      </div>
+      <div class="faq-item anim up d6">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Fakturační údaje společnosti
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          <p><strong>Zlatí Řemeslníci s.r.o.</strong><br>Školská 660/3, 110 00 Praha 1 – Nové Město<br>IČO: 22524894<br>DIČ: CZ22524894<br>Jsme plátci DPH.</p>
+        </div>
+      </div>
+      <div class="faq-item anim up d6">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Mohu pracovat ve více oborech?
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          <p>Ano. V profilu si nastavíte všechny specializace a systém nabízí zakázky ze všech. Čím více oborů, tím více práce.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FINAL CTA ═══════════════ -->
+<section style="padding: 88px 0;">
+  <div class="container" style="text-align: center;">
+    <h2 class="section-title anim up" style="text-align: center;">
+      Připraveni?
+    </h2>
+    <p style="color: var(--text-muted); max-width: 440px; margin: 0 auto 36px; font-size: 1rem; line-height: 1.75;" class="anim up d1">
+      Vracíme se a máme pro vás zakázky. Aplikace je připravená, podmínky známe. Pojďme na to.
+    </p>
+    <div class="demo-buttons anim up d2" style="margin-bottom: 20px;">
+      <a href="https://zlati-remeslnici.vercel.app/dispatch" target="_blank" class="btn-gold large">Vyzkoušet demo →</a>
+      <a href="tel:+420228222061" class="btn-outline">📞 +420 228 222 061</a>
+      <a href="https://wa.me/421903328882" target="_blank" class="btn-outline">💬 WhatsApp</a>
+    </div>
+    <p style="color: var(--text-muted); font-size: 0.75rem; opacity: 0.5;">
+      Žádné poplatky · Žádné závazky · Začněte ještě dnes
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer>
+  <div class="container">
+    <div class="logo-circle-lg"><img src="logo.png" alt="Zlatí Řemeslníci"></div>
+    <a href="https://www.zlatiremeslnici.com" target="_blank" class="footer-logo" style="display:block;">Zlatí Řemeslníci</a>
+    <p style="margin-bottom: 6px;"><a href="https://www.zlatiremeslnici.com" target="_blank" style="color: var(--text-muted); text-decoration: underline;">www.zlatiremeslnici.com</a> · 📞 +420 228 222 061 · 💬 <a href="https://wa.me/421903328882" target="_blank" style="color: var(--text-muted); text-decoration: underline;">WhatsApp</a> · ✉ <a href="mailto:info@zlatiremeslnici.com" style="color: var(--text-muted); text-decoration: underline;">info@zlatiremeslnici.com</a></p>
+    <p>© 2026 Zlatí Řemeslníci s.r.o. · Všechna práva vyhrazena</p>
+  </div>
+</footer>
+
+<!-- ═══════════════ SCRIPTS ═══════════════ -->
+<script>
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 50);
+}, { passive: true });
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.anim').forEach(el => observer.observe(el));
+
+function toggleFaq(el) {
+  const item = el.closest('.faq-item');
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+
+</body>
+</html>
