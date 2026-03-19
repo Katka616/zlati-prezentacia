@@ -328,15 +328,87 @@ body{
           <span style="font-weight:800;color:var(--gold);font-size:0.72rem">Dle sazby</span>
         </div>
       </div>
-      <div class="sec">Údaje faktury</div>
-      <div class="c" style="padding:8px 12px">
-        <div class="row"><span>Variabilní symbol</span><span class="v">20260847</span></div>
-        <div class="row"><span>QR kód</span><span class="v" style="color:var(--gold)">✓ Vygenerován</span></div>
-        <div class="row"><span>DPH</span><span class="v">12%</span></div>
-        <div class="row"><span>Splatnost</span><span class="v">01.04.2026</span></div>
+      <div class="btn" onclick="go('inv-choice')">🧾 Vystavit fakturu</div>
+    </div>
+  </div>
+
+  <!-- ═══════ INVOICE CHOICE ═══════ -->
+  <div class="scr" id="s-inv-choice">
+    <div class="hdr" style="padding-bottom:0"><div class="back" onclick="go('settle')">← Zpět</div></div>
+    <div class="scr-body">
+      <div style="font-size:0.82rem;font-weight:700;margin-bottom:4px">Vystavit fakturu</div>
+      <div style="font-size:0.65rem;color:var(--muted);margin-bottom:16px">Zvolte způsob vystavení</div>
+
+      <div class="c" style="padding:16px;cursor:pointer;border:1.5px solid rgba(201,168,76,0.25)" onclick="go('inv-form')">
+        <div style="font-size:1.3rem;margin-bottom:6px">📄</div>
+        <h4 style="font-size:0.78rem;margin-bottom:4px">Nechat vystavit systémem</h4>
+        <p style="font-size:0.62rem">Systém vygeneruje fakturu automaticky s QR kódem pro platbu. Stačí zkontrolovat údaje.</p>
       </div>
-      <div class="btn" onclick="toast('🧾 Faktura vygenerována — PDF ke stažení')">🧾 Vystavit fakturu systémem</div>
-      <div class="btn-o" onclick="toast('📤 Nahrávám vlastní fakturu...')">📤 Nahrát vlastní fakturu</div>
+
+      <div class="c" style="padding:16px;cursor:pointer" onclick="toast('📤 Otevřeno nahrávání vlastní faktury...')">
+        <div style="font-size:1.3rem;margin-bottom:6px">📤</div>
+        <h4 style="font-size:0.78rem;margin-bottom:4px">Fakturu vystavím sám</h4>
+        <p style="font-size:0.62rem">Nahrajte vlastní PDF fakturu z vašeho fakturačního systému.</p>
+      </div>
+
+      <div class="btn-o" onclick="go('settle')" style="margin-top:8px">Zrušit</div>
+    </div>
+  </div>
+
+  <!-- ═══════ INVOICE FORM (system) ═══════ -->
+  <div class="scr" id="s-inv-form">
+    <div class="hdr" style="padding-bottom:0"><div class="back" onclick="go('inv-choice')">← Zpět</div></div>
+    <div class="scr-body">
+      <div style="font-size:0.82rem;font-weight:700;margin-bottom:2px">Vystavit fakturu systémem</div>
+      <div style="font-size:0.58rem;color:var(--muted);margin-bottom:12px">Údaje lze upravit před odesláním</div>
+
+      <div class="sec" style="margin-top:0">Dodavatel (vy)</div>
+      <div class="c" style="padding:10px 12px">
+        <div class="row"><span>Jméno</span><span class="v" style="background:rgba(255,255,255,0.06);padding:3px 10px;border-radius:5px">Pavel Horák</span></div>
+        <div class="row"><span>IČO</span><span class="v" style="background:rgba(255,255,255,0.06);padding:3px 10px;border-radius:5px">12345678</span></div>
+        <div class="row"><span>DIČ</span><span class="v" style="background:rgba(255,255,255,0.06);padding:3px 10px;border-radius:5px">CZ12345678</span></div>
+        <div class="row"><span>Č. účtu</span><span class="v" style="background:rgba(255,255,255,0.06);padding:3px 10px;border-radius:5px">123456/0100</span></div>
+      </div>
+
+      <div class="sec">Odběratel <span style="font-size:0.42rem;background:rgba(255,255,255,0.06);padding:1px 5px;border-radius:3px;margin-left:4px">nelze upravit</span></div>
+      <div class="c" style="padding:10px 12px;opacity:0.7">
+        <p style="font-size:0.62rem;color:var(--sec);line-height:1.5">Zlatí Řemeslníci s.r.o.<br>Školská 660/3<br>110 00 Praha 1<br>IČO: 22524894 · DIČ: CZ22524894</p>
+      </div>
+
+      <div class="sec">Údaje faktury</div>
+      <div class="c" style="padding:10px 12px">
+        <div class="row"><span>Číslo faktury</span><span class="v" style="background:rgba(255,255,255,0.06);padding:3px 10px;border-radius:5px">FV-2026-001</span></div>
+        <div class="row"><span style="color:var(--gold);font-weight:700">Variabilní symbol *</span><span class="v" style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.3);padding:3px 10px;border-radius:5px;color:var(--gold)">20260847</span></div>
+        <div class="row"><span>Datum vystavení</span><span class="v">18.03.2026</span></div>
+        <div class="row"><span>Datum splatnosti</span><span class="v" style="background:rgba(255,255,255,0.06);padding:3px 10px;border-radius:5px">01.04.2026</span></div>
+        <div class="row"><span>Forma úhrady</span><span class="v">Bankovní převod</span></div>
+      </div>
+
+      <div class="sec">Sazba DPH</div>
+      <div style="display:flex;gap:4px;margin-bottom:12px">
+        <div style="padding:6px 12px;border-radius:20px;font-size:0.6rem;font-weight:700;background:rgba(201,168,76,0.12);color:var(--gold);border:1px solid rgba(201,168,76,0.3)">12 %</div>
+        <div style="padding:6px 12px;border-radius:20px;font-size:0.6rem;font-weight:600;color:var(--muted);border:1px solid rgba(255,255,255,0.08);cursor:pointer">21 %</div>
+        <div style="padding:6px 12px;border-radius:20px;font-size:0.6rem;font-weight:600;color:var(--muted);border:1px solid rgba(255,255,255,0.08);cursor:pointer">Reverse ch.</div>
+        <div style="padding:6px 12px;border-radius:20px;font-size:0.6rem;font-weight:600;color:var(--muted);border:1px solid rgba(255,255,255,0.08);cursor:pointer">Neplátce</div>
+      </div>
+
+      <div class="sec">Náhled položek</div>
+      <div class="c" style="padding:8px 10px;font-size:0.52rem">
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="flex:2">Práce 1. hodina</span><span style="flex:1;text-align:right">1,0 h</span><span style="flex:1;text-align:right;color:var(--sec)">12%</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="flex:2">Práce další hodiny</span><span style="flex:1;text-align:right">1,5 h</span><span style="flex:1;text-align:right;color:var(--sec)">12%</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="flex:2">Cestovné</span><span style="flex:1;text-align:right">35 km</span><span style="flex:1;text-align:right;color:var(--sec)">12%</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="flex:2">Kartuše Grohe 46mm</span><span style="flex:1;text-align:right">1 ks</span><span style="flex:1;text-align:right;color:var(--sec)">21%</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0"><span style="flex:2">Těsnění</span><span style="flex:1;text-align:right">2 ks</span><span style="flex:1;text-align:right;color:var(--sec)">21%</span></div>
+        <div style="border-top:2px solid var(--gold);margin-top:6px;padding-top:6px;display:flex;justify-content:space-between">
+          <span style="font-weight:700;font-size:0.62rem">Celkem k úhradě</span>
+          <span style="font-weight:800;color:var(--gold);font-size:0.62rem">Dle sazby</span>
+        </div>
+      </div>
+
+      <div style="font-size:0.48rem;color:var(--muted);margin:6px 0 12px;line-height:1.4">Ref.: ZR-2026-0847 · Vystaveno: 18.03.2026 · DUZP: 18.03.2026 · Splatnost: 01.04.2026</div>
+
+      <div class="btn" onclick="toast('🧾 Faktura vygenerována — PDF ke stažení s QR kódem');setTimeout(function(){go('home')},2000)">Vygenerovat fakturu →</div>
+      <div class="btn-o" onclick="go('inv-choice')">Zrušit</div>
     </div>
   </div>
 
@@ -461,7 +533,7 @@ function go(id){
   if(id==='mpd')document.getElementById('t-mp').classList.add('on');
   if(id==='job1'||id==='job2'||id==='notif'||id==='estimate')document.getElementById('t-home').classList.add('on');
   if(id==='job1')renderJ1();
-  if(id==='settle')document.getElementById('t-jobs').classList.add('on');
+  if(id==='settle'||id==='inv-choice'||id==='inv-form')document.getElementById('t-jobs').classList.add('on');
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';setTimeout(()=>{t.style.display='none'},2500)}
 // Job 1 state machine — based on real smartButton.ts flow
