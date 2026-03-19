@@ -234,8 +234,8 @@ body{
         <p style="margin-top:4px">Jan Novák · <span style="color:var(--gold);cursor:pointer">📞 Zavolat</span></p>
         <p>📍 Vinohradská 42, Praha 2 · <span style="color:var(--gold);cursor:pointer">Navigovat →</span></p>
       </div>
-      <div class="st" id="j1-dots"><div class="dot d"></div><div class="dot d"></div><div class="dot d"></div><div class="dot n"></div><div class="dot"></div><div class="dot"></div></div>
-      <div id="j1-labels" style="display:flex;justify-content:space-between;font-size:0.58rem;color:#555;margin-bottom:14px"><span>Přijato</span><span>Na cestě</span><span>Na místě</span><span style="color:var(--gold);font-weight:700">Diagnostika</span><span>Oprava</span><span>Protokol</span></div>
+      <div class="st" id="j1-dots"><div class="dot d"></div><div class="dot d"></div><div class="dot d"></div><div class="dot n"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      <div id="j1-labels" style="display:flex;justify-content:space-between;font-size:0.5rem;color:#555;margin-bottom:14px"><span>Přijato</span><span>Na cestě</span><span>Na místě</span><span style="color:var(--gold);font-weight:700">Diagnostika</span><span>Oprava</span><span>Vyúčtování</span><span>Protokol</span><span>Faktura</span></div>
       <div class="btn" id="j1-btn" onclick="advanceJob1()">📸 Nahrát foto diagnostiky</div>
       <div class="btn-o" id="j1-btn2" onclick="go('estimate')">📝 Vyplnit odhad ceny</div>
       <div class="sec" style="margin-top:16px">📋 Detail</div>
@@ -463,44 +463,58 @@ function go(id){
   if(id==='settle')document.getElementById('t-jobs').classList.add('on');
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';setTimeout(()=>{t.style.display='none'},2500)}
-// Job 1 state machine
-let j1step=0;
-const j1phases=[
-  {active:3,toast:'📸 Fotky odeslány',nextBtn:'✅ Odhad odeslán — zahájit opravu',showBtn2:true},
-  {active:4,toast:'✅ Odhad automaticky schválen — zahajte opravu',nextBtn:'🛠️ Oprava hotová — vyplnit protokol',showBtn2:false},
-  {active:5,toast:'🛠️ Oprava dokončena — vyplňte protokol',nextBtn:'📋 Protokol podepsán — přejít k vyúčtování',showBtn2:false},
-  {active:5,toast:'📋 Protokol podepsán klientem',nextBtn:null,showBtn2:false},
+// Job 1 state machine — based on real smartButton.ts flow
+let j1i=0;
+var j1flow=[
+  // step 0: initial state (arrived, diagnostics)
+  {dots:[1,1,1,2,0,0,0,0],hl:3,btn:'📷 Nahrát fotky diagnostiky',icon:'📷',type:'primary',btn2:true,toast:null},
+  // step 1: photos done → estimate
+  {dots:[1,1,1,2,0,0,0,0],hl:3,btn:'💰 Odeslat odhad ceny',icon:'💰',type:'primary',btn2:false,toast:'📷 Fotky diagnostiky nahrány'},
+  // step 2: estimate submitted → waiting
+  {dots:[1,1,1,2,0,0,0,0],hl:3,btn:'⏳ Čekám na schválení odhadu...',icon:'',type:'wait',btn2:false,toast:'💰 Odhad odeslán ke schválení',auto:2500},
+  // step 3: estimate approved → start repair
+  {dots:[1,1,1,1,2,0,0,0],hl:4,btn:'🔧 Začít opravu',icon:'🔧',type:'primary',btn2:false,toast:'✅ Odhad automaticky schválen'},
+  // step 4: working → work done
+  {dots:[1,1,1,1,2,0,0,0],hl:4,btn:'✅ Práce hotová',icon:'✅',type:'primary',btn2:false,toast:'🔧 Oprava zahájena'},
+  // step 5: work done → upload final photos
+  {dots:[1,1,1,1,1,2,0,0],hl:5,btn:'📷 Nahrát finální fotky',icon:'📷',type:'primary',btn2:false,toast:'✅ Práce dokončena'},
+  // step 6: photos done → finalize settlement
+  {dots:[1,1,1,1,1,2,0,0],hl:5,btn:'💰 Finalizovat vyúčtování',icon:'💰',type:'primary',btn2:false,toast:'📷 Finální fotky nahrány'},
+  // step 7: settlement review
+  {dots:[1,1,1,1,1,1,2,0],hl:6,btn:'✅ Potvrdit vyúčtování',icon:'✅',type:'primary',btn2:false,toast:'💰 Vyúčtování připraveno ke kontrole'},
+  // step 8: settlement approved → fill protocol
+  {dots:[1,1,1,1,1,1,2,0],hl:6,btn:'📋 Vyplnit finální protokol',icon:'📋',type:'primary',btn2:false,toast:'✅ Vyúčtování potvrzeno'},
+  // step 9: protocol sent → waiting for client signature
+  {dots:[1,1,1,1,1,1,2,0],hl:6,btn:'⏳ Čekám na podpis klienta...',icon:'',type:'wait',btn2:false,toast:'📋 Protokol odeslán klientovi k podpisu',auto:2500},
+  // step 10: signed → view settlement + invoice
+  {dots:[1,1,1,1,1,1,1,2],hl:7,btn:'🧾 Vystavit fakturu',icon:'🧾',type:'primary',btn2:false,toast:'✍️ Klient podepsal protokol'},
+  // step 11: invoice done → go to settlement screen
+  {dots:[1,1,1,1,1,1,1,1],hl:7,btn:'✅ Zakázka dokončena',icon:'✅',type:'done',btn2:false,toast:'🧾 Faktura vygenerována'},
 ];
-const j1names=['Přijato','Na cestě','Na místě','Diagnostika','Oprava','Protokol'];
-function advanceJob1(){
-  if(j1step>=j1phases.length-1){go('settle');return}
-  const phase=j1phases[j1step];
-  toast(phase.toast);
-  j1step++;
-  const next=j1phases[j1step];
-  // Update dots
-  const dotsEl=document.getElementById('j1-dots');
+var j1labels=['Přijato','Na cestě','Na místě','Diagnostika','Oprava','Vyúčtování','Protokol','Faktura'];
+function renderJ1(){
+  var s=j1flow[j1i];
+  var dotsEl=document.getElementById('j1-dots');
   while(dotsEl.firstChild)dotsEl.removeChild(dotsEl.firstChild);
-  for(let i=0;i<6;i++){
-    const d=document.createElement('div');
-    d.className=i<next.active?'dot d':i===next.active?'dot n':'dot';
-    dotsEl.appendChild(d);
-  }
-  // Update labels
-  const labelsEl=document.getElementById('j1-labels');
+  for(var i=0;i<8;i++){var d=document.createElement('div');d.className=s.dots[i]===1?'dot d':s.dots[i]===2?'dot n':'dot';dotsEl.appendChild(d)}
+  var labelsEl=document.getElementById('j1-labels');
   while(labelsEl.firstChild)labelsEl.removeChild(labelsEl.firstChild);
-  j1names.forEach(function(n,i){
-    const s=document.createElement('span');
-    s.textContent=n;
-    if(i===next.active){s.style.color='var(--gold)';s.style.fontWeight='700'}
-    labelsEl.appendChild(s);
-  });
-  // Update buttons
-  const btnEl=document.getElementById('j1-btn');
-  const btn2El=document.getElementById('j1-btn2');
-  if(next.nextBtn){btnEl.textContent=next.nextBtn}
-  else{btnEl.textContent='🧾 Přejít k vyúčtování';btnEl.onclick=function(){go('settle')}}
-  btn2El.style.display=next.showBtn2?'':'none';
+  j1labels.forEach(function(n,i){var sp=document.createElement('span');sp.textContent=n;if(i===s.hl){sp.style.color='var(--gold)';sp.style.fontWeight='700'}labelsEl.appendChild(sp)});
+  var btnEl=document.getElementById('j1-btn');
+  btnEl.textContent=s.btn;
+  btnEl.className=s.type==='wait'?'btn-w':s.type==='done'?'btn-w':'btn';
+  if(s.type==='done'){btnEl.onclick=function(){go('settle')}}
+  else if(s.type==='wait'){btnEl.onclick=null}
+  else{btnEl.onclick=advanceJob1}
+  document.getElementById('j1-btn2').style.display=s.btn2?'':'none';
+}
+function advanceJob1(){
+  if(j1i>=j1flow.length-1)return;
+  j1i++;
+  var s=j1flow[j1i];
+  if(s.toast)toast(s.toast);
+  renderJ1();
+  if(s.auto){setTimeout(function(){if(j1i<j1flow.length-1){j1i++;var ns=j1flow[j1i];if(ns.toast)toast(ns.toast);renderJ1()}},s.auto)}
 }
 
 function showJobTab(which){
