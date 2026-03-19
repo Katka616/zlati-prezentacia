@@ -62,7 +62,7 @@ body{
 .btn{background:var(--gold-g);color:#080808;border:none;border-radius:10px;padding:12px;font-weight:800;font-size:0.8rem;width:100%;cursor:pointer;text-align:center;margin-top:6px;letter-spacing:0.03em;transition:all 0.15s}
 .btn:active{transform:scale(0.97)}
 .btn-o{background:transparent;border:1.5px dashed rgba(201,168,76,0.35);color:var(--gold);border-radius:10px;padding:10px;font-weight:600;font-size:0.72rem;width:100%;cursor:pointer;text-align:center;margin-top:5px}
-.btn-w{background:rgba(201,168,76,0.07);border:1px solid rgba(201,168,76,0.15);color:var(--gold);border-radius:10px;padding:12px;font-weight:600;font-size:0.75rem;width:100%;text-align:center;margin-top:6px;animation:pw 2s ease-in-out infinite}
+.btn-w{background:rgba(201,168,76,0.07);border:1px solid rgba(201,168,76,0.15);color:var(--gold);border-radius:10px;padding:12px;font-weight:600;font-size:0.75rem;width:100%;text-align:center;margin-top:6px;animation:pw 2s ease-in-out infinite;cursor:default}
 @keyframes pw{0%,100%{opacity:1}50%{opacity:0.5}}
 
 /* Status */
@@ -460,6 +460,7 @@ function go(id){
   if(main){const t=document.getElementById('t-'+main);if(t)t.classList.add('on')}
   if(id==='mpd')document.getElementById('t-mp').classList.add('on');
   if(id==='job1'||id==='job2'||id==='notif'||id==='estimate')document.getElementById('t-home').classList.add('on');
+  if(id==='job1')renderJ1();
   if(id==='settle')document.getElementById('t-jobs').classList.add('on');
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';setTimeout(()=>{t.style.display='none'},2500)}
@@ -516,6 +517,9 @@ function advanceJob1(){
   renderJ1();
   if(s.auto){setTimeout(function(){if(j1i<j1flow.length-1){j1i++;var ns=j1flow[j1i];if(ns.toast)toast(ns.toast);renderJ1()}},s.auto)}
 }
+
+// Initialize job1 state on first visit
+function initJ1(){renderJ1()}
 
 function showJobTab(which){
   const a=document.getElementById('jobs-active'),d=document.getElementById('jobs-done');
