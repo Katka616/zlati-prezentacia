@@ -273,9 +273,24 @@ body{
           <p style="margin-top:2px">Bytový dům, 3. patro</p>
         </div>
         <div class="p-sec">📍 Adresa</div>
-        <div class="p-card"><p style="color:var(--text);font-weight:600;font-size:0.6rem">Štefánikova 15, Praha 5</p></div>
-        <div class="p-sec">📸 Fotky od klienta</div>
+        <div class="p-card"><p style="color:var(--text);font-weight:600;font-size:0.6rem">Štefánikova 15, Praha 5 – Smíchov</p></div>
+
+        <div class="p-sec">📝 Popis závady od klienta</div>
+        <div class="p-card"><p style="color:var(--text);font-size:0.55rem;line-height:1.5">„Teče voda ze stropu do koupelny, pravděpodobně prasklé potrubí. Voda stále teče, uzávěr jsme uzavřeli."</p></div>
+
+        <div class="p-sec">📸 Fotky od klienta (3)</div>
         <div class="p-photos"><div class="p-photo">🚿</div><div class="p-photo">💧</div><div class="p-photo">🏠</div></div>
+
+        <div class="p-sec">🔍 Diagnostika klienta</div>
+        <div class="p-card" style="padding:6px 8px">
+          <div class="p-row"><span>Typ nemovitosti</span><span class="v">Bytový dům</span></div>
+          <div class="p-row"><span>Podlaží</span><span class="v">3. patro</span></div>
+          <div class="p-row"><span>Typ závady</span><span class="v">Únik vody</span></div>
+          <div class="p-row"><span>Kde teče</span><span class="v">Strop koupelny</span></div>
+          <div class="p-row"><span>Hlavní uzávěr</span><span class="v">Uzavřen ✓</span></div>
+          <div class="p-row"><span>Naléhavost</span><span class="v" style="color:#ef4444">Kritická</span></div>
+        </div>
+
         <div class="p-sec">🗓️ Termín</div>
         <div class="p-card" style="border:1.5px solid rgba(201,168,76,0.3);background:rgba(201,168,76,0.06)">
           <p style="color:var(--text);font-weight:600;font-size:0.6rem">Dnes, 11:30 – 13:00 ✓</p>
@@ -438,19 +453,36 @@ body{
     <div class="phone">
       <div class="phone-notch"></div>
       <div class="phone-inner">
-        <div style="font-size:0.55rem;color:var(--gold);font-weight:600;margin-bottom:6px">← ZR-2026-0847</div>
-        <div class="p-card p-card-gold" style="padding:14px">
-          <div style="display:flex;justify-content:space-between"><h4>🔧 Oprava baterie</h4><span class="p-tag" style="background:rgba(74,222,128,0.12);color:#4ade80">Hotovo ✓</span></div>
-          <div class="p-status"><div class="p-dot done"></div><div class="p-dot done"></div><div class="p-dot done"></div><div class="p-dot done"></div><div class="p-dot done"></div><div class="p-dot now"></div></div>
+        <div style="font-size:0.55rem;color:var(--gold);font-weight:600;margin-bottom:4px">🧾 Vyúčtování zakázky</div>
+        <div style="background:rgba(255,255,255,0.04);border-radius:6px;padding:5px 8px;font-size:0.48rem;color:var(--muted);margin-bottom:8px">ZR-2026-0847 · Jan Novák · Praha 2</div>
+
+        <div class="p-sec" style="margin-top:0">Detailní rozúčtování</div>
+        <div class="p-card" style="padding:8px 10px">
+          <div class="p-row" style="padding:4px 0"><span>Práce — 1. hodina</span><span class="v" style="font-size:0.55rem">—</span></div>
+          <div style="font-size:0.42rem;color:var(--muted);padding-bottom:4px;border-bottom:1px solid rgba(255,255,255,0.04)">1,0 h × sazba/h</div>
+          <div class="p-row" style="padding:4px 0"><span>Práce — další hodiny</span><span class="v" style="font-size:0.55rem">—</span></div>
+          <div style="font-size:0.42rem;color:var(--muted);padding-bottom:4px;border-bottom:1px solid rgba(255,255,255,0.04)">1,5 h × sazba/h</div>
+          <div class="p-row" style="padding:4px 0"><span>Cestovné</span><span class="v" style="font-size:0.55rem">—</span></div>
+          <div style="font-size:0.42rem;color:var(--muted);padding-bottom:4px;border-bottom:1px solid rgba(255,255,255,0.04)">35 km × sazba/km</div>
+          <div class="p-row" style="padding:4px 0"><span>Materiál: Kartuše Grohe</span><span class="v" style="font-size:0.55rem">1 ks</span></div>
+          <div style="font-size:0.42rem;color:var(--muted);padding-bottom:4px;border-bottom:1px solid rgba(255,255,255,0.04)">Náhradní díl</div>
+          <div class="p-row" style="padding:4px 0"><span>Materiál: Těsnění</span><span class="v" style="font-size:0.55rem">2 ks</span></div>
+          <div style="border-top:2px solid var(--gold);margin-top:6px;padding-top:6px;display:flex;justify-content:space-between;font-size:0.62rem">
+            <span style="font-weight:700;color:var(--text)">Na fakturu od ZR</span>
+            <span style="font-weight:800;color:var(--gold)">Dle sazby</span>
+          </div>
         </div>
-        <div class="p-sec">🧾 Faktura</div>
-        <div class="p-card">
+
+        <div class="p-sec">Údaje faktury</div>
+        <div class="p-card" style="padding:8px 10px">
           <div class="p-row"><span>Variabilní symbol</span><span class="v">20260847</span></div>
           <div class="p-row"><span>QR kód</span><span class="v" style="color:var(--gold)">✓ Vygenerován</span></div>
-          <div class="p-row"><span>Stav</span><span class="v" style="color:#4ade80">Odesláno</span></div>
+          <div class="p-row"><span>DPH</span><span class="v">12%</span></div>
+          <div class="p-row"><span>Splatnost</span><span class="v">01.04.2026</span></div>
         </div>
-        <div class="p-btn">📄 Stáhnout PDF faktury</div>
-        <div class="p-btn-outline">Nahrát vlastní fakturu</div>
+
+        <div class="p-btn">🧾 Vystavit fakturu systémem</div>
+        <div class="p-btn-outline">📤 Nahrát vlastní fakturu</div>
         <div class="p-tabs">
           <div class="p-tab active"><span class="p-tab-icon">⚡</span>Domů</div>
           <div class="p-tab"><span class="p-tab-icon">🏪</span>Nabídky</div>
