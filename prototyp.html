@@ -147,7 +147,7 @@ body{
         <div style="display:flex;justify-content:space-between"><h4>🔧 Oprava vodovodní baterie</h4><span class="tg">Na místě</span></div>
         <p>Jan Novák · Vinohradská 42, Praha 2</p>
         <div class="st"><div class="dot d"></div><div class="dot d"></div><div class="dot d"></div><div class="dot n"></div><div class="dot"></div><div class="dot"></div></div>
-        <div class="btn" onclick="event.stopPropagation();toast('📸 Otevírám fotoaparát...')">📸 Nahrát foto diagnostiky</div>
+        <div class="btn" onclick="event.stopPropagation();go('job1')">📸 Nahrát foto diagnostiky</div>
       </div>
       <div class="sec">📋 Dnes</div>
       <div class="c" onclick="go('job2')">
@@ -294,7 +294,7 @@ body{
         <p>📍 Korunní 88, Praha 3 · <span style="color:var(--gold)">Navigovat →</span></p>
       </div>
       <div class="st"><div class="dot d"></div><div class="dot n"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-      <div class="btn" onclick="toast('🚗 Status změněn — jste na cestě!')">🚗 Jsem na cestě</div>
+      <div class="btn" id="j2-btn" onclick="advanceJob2()">🚗 Jsem na cestě</div>
       <div class="sec" style="margin-top:14px">📋 Detail</div>
       <div class="c" style="padding:8px 12px">
         <div class="row"><span>Kategorie</span><span class="v">Elektrika</span></div>
@@ -518,8 +518,33 @@ function advanceJob1(){
   if(s.auto){setTimeout(function(){if(j1i<j1flow.length-1){j1i++;var ns=j1flow[j1i];if(ns.toast)toast(ns.toast);renderJ1()}},s.auto)}
 }
 
-// Initialize job1 state on first visit
-function initJ1(){renderJ1()}
+// Job 2 state machine
+var j2i=0;
+var j2flow=[
+  {btn:'🚗 Jsem na cestě',type:'primary',toast:null},
+  {btn:'📍 Dorazil jsem — začít práci',type:'primary',toast:'🚗 Jste na cestě — zákazník vidí váš stav'},
+  {btn:'📷 Nahrát fotky diagnostiky',type:'primary',toast:'📍 Dorazili jste na místo'},
+  {btn:'💰 Odeslat odhad ceny',type:'primary',toast:'📷 Fotky diagnostiky nahrány'},
+  {btn:'⏳ Čekám na schválení odhadu...',type:'wait',toast:'💰 Odhad odeslán ke schválení',auto:2500},
+  {btn:'🔧 Začít opravu',type:'primary',toast:'✅ Odhad automaticky schválen'},
+  {btn:'✅ Práce hotová',type:'primary',toast:'🔧 Oprava zahájena'},
+  {btn:'📋 Vyplnit protokol',type:'primary',toast:'✅ Práce dokončena'},
+  {btn:'🧾 Vystavit fakturu',type:'primary',toast:'📋 Protokol podepsán klientem'},
+  {btn:'✅ Zakázka dokončena',type:'done',toast:'🧾 Faktura vygenerována'},
+];
+function advanceJob2(){
+  if(j2i>=j2flow.length-1){go('settle');return}
+  j2i++;
+  var s=j2flow[j2i];
+  if(s.toast)toast(s.toast);
+  var el=document.getElementById('j2-btn');
+  el.textContent=s.btn;
+  el.className=s.type==='wait'?'btn-w':s.type==='done'?'btn-w':'btn';
+  if(s.type==='done'){el.onclick=function(){toast('✅ Zakázka dokončena');go('home')}}
+  else if(s.type==='wait'){el.onclick=null}
+  else{el.onclick=advanceJob2}
+  if(s.auto){setTimeout(function(){if(j2i<j2flow.length-1){j2i++;var ns=j2flow[j2i];if(ns.toast)toast(ns.toast);var e=document.getElementById('j2-btn');e.textContent=ns.btn;e.className='btn';e.onclick=advanceJob2}},s.auto)}
+}
 
 function showJobTab(which){
   const a=document.getElementById('jobs-active'),d=document.getElementById('jobs-done');
