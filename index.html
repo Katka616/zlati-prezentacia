@@ -950,6 +950,36 @@ footer p { font-size: 0.75rem; color: var(--text-muted); }
 </head>
 <body>
 
+<!-- ═══════════════ PASSWORD GATE ═══════════════ -->
+<div id="gate" style="position:fixed;inset:0;z-index:99999;background:#080808;display:flex;align-items:center;justify-content:center;">
+  <div style="text-align:center;max-width:380px;padding:24px;">
+    <div style="width:72px;height:72px;border-radius:50%;overflow:hidden;border:2px solid rgba(201,168,76,0.3);background:#080808;margin:0 auto 24px;">
+      <img src="logo.png" alt="" style="width:200%;height:200%;object-fit:cover;object-position:48% 38%;display:block;margin-left:-50%;margin-top:-28%;">
+    </div>
+    <h2 style="font-family:'Cinzel',serif;font-size:1.4rem;color:#C9A84C;margin-bottom:8px;">Zlatí Řemeslníci</h2>
+    <p style="font-family:'Montserrat',sans-serif;color:#8a847c;font-size:0.85rem;margin-bottom:28px;line-height:1.6;">Tato stránka je přístupná pouze na pozvánku.<br>Zadejte přístupový kód.</p>
+    <input id="gate-input" type="password" placeholder="Přístupový kód" autocomplete="off" style="width:100%;padding:14px 20px;border-radius:50px;border:1.5px solid rgba(201,168,76,0.3);background:rgba(255,255,255,0.04);color:#ede8df;font-family:'Montserrat',sans-serif;font-size:0.95rem;text-align:center;outline:none;transition:border-color 0.3s;" onfocus="this.style.borderColor='#C9A84C'" onblur="this.style.borderColor='rgba(201,168,76,0.3)'">
+    <button onclick="checkGate()" style="width:100%;margin-top:14px;padding:14px;border-radius:50px;border:none;background:linear-gradient(135deg,#b89a3a,#d4b85c,#e8d06c);color:#080808;font-family:'Montserrat',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;letter-spacing:0.03em;">Vstoupit →</button>
+    <p id="gate-error" style="color:#ef4444;font-size:0.8rem;margin-top:12px;display:none;">Nesprávný kód. Zkuste znovu.</p>
+  </div>
+</div>
+<script>
+const GATE_CODE = 'ZLATI2026';
+function checkGate() {
+  const input = document.getElementById('gate-input').value.trim();
+  if (input === GATE_CODE) {
+    document.getElementById('gate').style.display = 'none';
+    sessionStorage.setItem('zlati-gate', '1');
+  } else {
+    document.getElementById('gate-error').style.display = 'block';
+    document.getElementById('gate-input').style.borderColor = '#ef4444';
+    setTimeout(() => { document.getElementById('gate-input').style.borderColor = 'rgba(201,168,76,0.3)'; }, 2000);
+  }
+}
+document.getElementById('gate-input').addEventListener('keydown', e => { if (e.key === 'Enter') checkGate(); });
+if (sessionStorage.getItem('zlati-gate') === '1') document.getElementById('gate').style.display = 'none';
+</script>
+
 <!-- ═══════════════ NAV ═══════════════ -->
 <nav id="navbar">
   <div class="container">
