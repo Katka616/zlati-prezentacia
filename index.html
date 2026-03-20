@@ -943,14 +943,160 @@ footer .footer-logo {
 }
 footer p { font-size: 0.75rem; color: var(--text-muted); }
 
-/* ═══════════════ RESPONSIVE ═══════════════ */
+/* ═══════════════ RESPONSIVE — TABLET (601–968px) ═══════════════ */
+@media (max-width: 968px) {
+  .container { padding: 0 20px; }
+  section { padding: 80px 0; }
+  .hero { min-height: auto; padding-top: 100px; padding-bottom: 60px; }
+  .hero-content { gap: 40px; }
+  .hero-sub { font-size: 1rem; }
+  .benefit-row, .benefit-row.reverse { gap: 40px; margin-bottom: 64px; }
+  .benefit-visual { padding: 36px 24px; }
+  .benefit-text h3 { font-size: 1.3rem; }
+  .demo-card { padding: 48px 32px; }
+  .step-content { padding: 22px; }
+  .step-content h3 { font-size: 0.95rem; }
+  .step-content p { font-size: 0.82rem; }
+}
+
+/* ═══════════════ RESPONSIVE — MOBILE (≤600px) ═══════════════ */
 @media (max-width: 600px) {
-  .phone-mockup { width: 250px; height: 520px; }
+  /* Safe areas for iPhone notch + home indicator */
+  body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+  nav { padding: max(12px, env(safe-area-inset-top)) 0 10px; }
+
+  .container { padding: 0 16px; }
+  section { padding: 56px 0; }
+
+  /* Nav — compact */
+  .nav-logo { font-size: 0.95rem; gap: 8px; }
+  .logo-circle { width: 30px; height: 30px; }
+  .nav-cta { padding: 8px 18px; font-size: 0.7rem; }
+
+  /* Hero — stacked, no phone overflow */
+  .hero { min-height: auto; padding: 90px 0 40px; }
+  .hero h1 { font-size: 2rem; margin-bottom: 20px; }
+  .hero-sub { font-size: 0.9rem; margin-bottom: 32px; }
+  .phone-mockup { width: 220px; height: 460px; border-radius: 32px; }
+  .phone-mockup .phone-notch { width: 80px; height: 20px; }
+  .phone-screen { padding: 30px 14px 14px; gap: 8px; }
+  .phone-card { padding: 10px; }
+  .phone-card h4 { font-size: 0.65rem; }
+  .phone-card p { font-size: 0.55rem; }
+  .phone-btn { padding: 7px; font-size: 0.6rem; }
+  .phone-tab-icon { font-size: 0.85rem; }
+  .phone-tab { font-size: 0.42rem; }
+
+  /* Buttons — full width on mobile */
+  .hero-buttons { flex-direction: column; width: 100%; }
+  .hero-buttons .btn-gold,
+  .hero-buttons .btn-outline { width: 100%; justify-content: center; padding: 14px 24px; font-size: 0.88rem; }
+  .btn-gold { padding: 14px 28px; font-size: 0.88rem; }
+  .btn-gold.large { padding: 16px 32px; font-size: 0.92rem; }
+  .btn-outline { padding: 14px 28px; font-size: 0.88rem; }
+
+  /* Stats */
+  .stats-bar { padding: 36px 0; }
+  .stats-grid { gap: 24px; }
+  .stat-item h3 { font-size: 2rem; }
+  .stat-item p { font-size: 0.75rem; }
+
+  /* Section headers */
+  .section-title { font-size: 1.5rem; margin-bottom: 14px; }
+  .section-desc { font-size: 0.88rem; margin-bottom: 40px; }
+
+  /* Feature cards */
   .feature-card { padding: 24px 20px; }
-  .demo-card { padding: 36px 20px; }
-  .steps-timeline { padding-left: 52px; }
-  .step-number { left: -52px; width: 40px; height: 40px; font-size: 0.9rem; }
-  .steps-timeline::before { left: 19px; }
+  .feature-icon { width: 44px; height: 44px; font-size: 1.3rem; margin-bottom: 14px; }
+  .feature-card h3 { font-size: 0.92rem; }
+  .feature-card p { font-size: 0.8rem; }
+
+  /* Spec chips */
+  .spec-grid { gap: 10px; margin-top: 28px; }
+  .spec-chip { padding: 14px 6px; }
+  .spec-chip .icon { font-size: 1.3rem; }
+  .spec-chip span { font-size: 0.62rem; }
+
+  /* Timeline */
+  .steps-timeline { padding-left: 48px; }
+  .steps-timeline::before { left: 18px; }
+  .step-number { left: -48px; width: 36px; height: 36px; font-size: 0.85rem; }
+  .step-item { padding-bottom: 32px; }
+  .step-content { padding: 18px; }
+  .step-content h3 { font-size: 0.88rem; }
+  .step-content p { font-size: 0.78rem; }
+  .step-badge { font-size: 0.65rem; padding: 4px 10px; }
+
+  /* Benefits */
+  .benefit-row, .benefit-row.reverse { gap: 24px; margin-bottom: 48px; }
+  .benefit-visual { padding: 32px 20px; }
+  .benefit-emoji { font-size: 2.8rem; }
+  .benefit-visual h4 { font-size: 1rem; }
+  .benefit-text h3 { font-size: 1.2rem; }
+  .benefit-text p { font-size: 0.85rem; }
+  .benefit-list li { font-size: 0.82rem; }
+
+  /* Comparison — card layout instead of table on mobile */
+  .comparison-table { min-width: unset; }
+  .comparison-table th,
+  .comparison-table td { padding: 12px 14px; font-size: 0.75rem; }
+  .comparison-table thead th { font-size: 0.72rem; }
+
+  /* Demo */
+  .demo-card { padding: 28px 16px; border-radius: 18px; }
+  .demo-card h2 { font-size: 1.4rem; }
+  .demo-card > p { font-size: 0.88rem; }
+  .demo-step { padding: 18px 14px; }
+  .demo-step h4 { font-size: 0.82rem; }
+  .demo-step p { font-size: 0.72rem; }
+  .demo-buttons { flex-direction: column; width: 100%; }
+  .demo-buttons .btn-gold,
+  .demo-buttons .btn-outline { width: 100%; justify-content: center; }
+
+  /* FAQ */
+  .faq-question { padding: 16px 18px; font-size: 0.82rem; }
+  .faq-answer p { font-size: 0.8rem; }
+
+  /* Footer — stack contact info */
+  footer { padding: 32px 0 calc(32px + env(safe-area-inset-bottom)); }
+  footer p { font-size: 0.68rem; line-height: 1.8; }
+
+  /* Story section — stack KL card */
+  .story-kl-card { flex-direction: column; text-align: center; border-radius: 16px !important; padding: 14px 20px !important; }
+}
+
+/* ═══════════════ RESPONSIVE — SMALL PHONES (≤375px, iPhone SE) ═══════════════ */
+@media (max-width: 375px) {
+  .container { padding: 0 14px; }
+  .hero h1 { font-size: 1.7rem; }
+  .hero-sub { font-size: 0.85rem; }
+  .phone-mockup { width: 200px; height: 420px; }
+  .section-title { font-size: 1.35rem; }
+  .nav-logo { font-size: 0.85rem; }
+  .nav-cta { padding: 7px 14px; font-size: 0.65rem; }
+  .benefit-text h3 { font-size: 1.1rem; }
+  .comparison-table th,
+  .comparison-table td { padding: 10px 10px; font-size: 0.68rem; }
+}
+
+/* ═══════════════ TOUCH OPTIMIZATION ═══════════════ */
+@media (hover: none) and (pointer: coarse) {
+  /* Disable hover effects on touch devices */
+  .feature-card:hover { transform: none; box-shadow: none; }
+  .feature-card:hover::before { opacity: 0; }
+  .spec-chip:hover { transform: none; }
+  .btn-gold:hover { transform: none; }
+  .btn-outline:hover { transform: none; background: transparent; }
+
+  /* Active states instead */
+  .feature-card:active { transform: scale(0.98); opacity: 0.9; }
+  .btn-gold:active { transform: scale(0.97); }
+  .btn-outline:active { background: rgba(201, 168, 76, 0.08); }
+  .faq-question:active { color: var(--gold); }
+
+  /* Minimum touch targets */
+  .faq-question { min-height: 48px; }
+  .nav-cta { min-height: 44px; display: inline-flex; align-items: center; }
 }
 </style>
 </head>
@@ -1097,7 +1243,7 @@ if (sessionStorage.getItem('zlati-gate') === '1') document.getElementById('gate'
         Zakázky od pojišťoven budou přicházet přímo od nás a řešit se přes tuto aplikaci.
         <strong style="color: var(--text);">Podmínky, které jsme si dříve dojednali, zůstávají v platnosti.</strong>
       </p>
-      <div style="display: inline-flex; align-items: center; gap: 14px; background: rgba(201,168,76,0.06); border: 1px solid var(--border); border-radius: 50px; padding: 10px 24px;">
+      <div class="story-kl-card" style="display: inline-flex; align-items: center; gap: 14px; background: rgba(201,168,76,0.06); border: 1px solid var(--border); border-radius: 50px; padding: 10px 24px;">
         <div style="width: 40px; height: 40px; background: var(--gold-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #080808; font-size: 0.85rem;">KL</div>
         <div style="text-align: left;">
           <div style="font-weight: 700; font-size: 0.88rem; color: var(--text);">Katarína Lacinová</div>
