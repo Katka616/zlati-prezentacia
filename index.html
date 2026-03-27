@@ -1290,7 +1290,7 @@ if (sessionStorage.getItem('zlati-gate') === '1') document.getElementById('gate'
       <div class="feature-card anim up d2">
         <div class="feature-icon">💰</div>
         <h3>Vyúčtování bez tabulek</h3>
-        <p>Systém spočítá odměnu z odpracovaných hodin, kilometrů a materiálu. Automaticky, přesně.</p>
+        <p>Po dokončení práce potvrdíte hodiny, km a materiál. Systém spočítá odměnu. Pokud klient odmítne doplatok, jedním klikem upravíte cenu.</p>
       </div>
       <div class="feature-card anim up d3">
         <div class="feature-icon">🧾</div>
@@ -1369,7 +1369,7 @@ if (sessionStorage.getItem('zlati-gate') === '1') document.getElementById('gate'
         <div class="step-number">3</div>
         <div class="step-content">
           <h3>🔍 Diagnostika a odhad</h3>
-          <p>Vyfotíte závadu, vyplníte odhad. Buď se schválí automaticky a výsledek uvidíte ihned, nebo — pokud je potřeba doplatok — odešle se klientovi ke schválení přes portál. Jakmile klient schválí, dostanete notifikaci.</p>
+          <p>Na místě vyfotíte závadu a vyplníte odhad (hodiny, materiál). Odhad se buď schválí automaticky, nebo — pokud je potřeba doplatok — odešle se klientovi ke schválení přes portál. Jakmile klient schválí, dostanete notifikaci přímo do aplikace.</p>
           <div class="step-badge">Hlasová diktace — popište práci vlastními slovy</div>
         </div>
       </div>
@@ -1377,15 +1377,15 @@ if (sessionStorage.getItem('zlati-gate') === '1') document.getElementById('gate'
         <div class="step-number">4</div>
         <div class="step-content">
           <h3>🛠️ Opravujete</h3>
-          <p>Soustřeďte se na práci. Vyjednávání o ceně s klientem u něj doma? To je minulost. Vše řeší aplikace diskrétně přes portál — schválení, komunikaci i doplatky.</p>
+          <p>Soustřeďte se na práci. Vyjednávání o ceně s klientem u něj doma? To je minulost. Vše řeší aplikace diskrétně přes portál. Pokud klient doplatok odmítne, můžete jedním klikem upravit cenu a odeslat znovu — nebo zakázku ukončit diagnostickým protokolem.</p>
           <div class="step-badge">Žádné telefonáty o ceně — vše vyřídí aplikace</div>
         </div>
       </div>
       <div class="step-item anim left d4">
         <div class="step-number">5</div>
         <div class="step-content">
-          <h3>📋 Protokol a podpis</h3>
-          <p>Průvodce vás provede: info o zakázce → návštěvy → práce + materiál → fotografie → checklist. Zákazník podepíše na vašem mobilu nebo přes odkaz na portálu.</p>
+          <h3>📋 Vyúčtování a protokol</h3>
+          <p>Po dokončení práce potvrdíte vyúčtování — hodiny, kilometry, materiál. Systém spočítá cenu. Pak vás průvodce provede protokolem: popis práce → materiál → fotografie → digitální podpis. Zákazník podepíše na mobilu nebo přes portál.</p>
           <div class="step-badge">Digitální podpis — konec papírových formulářů</div>
         </div>
       </div>
@@ -1661,6 +1661,15 @@ if (sessionStorage.getItem('zlati-gate') === '1') document.getElementById('gate'
         </div>
         <div class="faq-answer">
           <p>Samozřejmě. V Marketplace vidíte nabídky podle vaší specializace a lokality — s kompletním detailem. Vy rozhodujete, co přijmete a co odmítnete.</p>
+        </div>
+      </div>
+      <div class="faq-item anim up d3">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Co když klient odmítne doplatok?
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          <p>Dostanete notifikaci a na jednom místě máte dvě možnosti: upravit cenu a odeslat znovu, nebo zakázku ukončit diagnostickým protokolem. Vše jedním klikem, žádné telefonáty.</p>
         </div>
       </div>
       <div class="faq-item anim up d3">
