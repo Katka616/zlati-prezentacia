@@ -280,7 +280,150 @@ body{
       <div class="btn-o" style="border-style:dashed">+ Přidat materiál</div>
       <div class="sec">📝 Poznámka</div>
       <div class="c"><p style="color:#ede8df;font-size:0.68rem;line-height:1.5">Výměna kartušového ventilu baterie Grohe. Demontáž staré kartuše, montáž nové, kontrola těsnosti.</p><div style="font-size:0.5rem;color:var(--gold);margin-top:3px">🎤 Diktováno hlasem</div></div>
-      <div class="btn" onclick="toast('✅ Odhad odeslán ke schválení');setTimeout(()=>go('job1'),1500)">Odeslat odhad →</div>
+      <div class="btn" onclick="toast('✅ Odhad odeslán ke schválení');j1i++;renderJ1();setTimeout(function(){go('job1')},1500)">Odeslat odhad →</div>
+    </div>
+  </div>
+
+  <!-- ═══════ PHOTO UPLOAD ═══════ -->
+  <div class="scr" id="s-photos">
+    <div class="hdr" style="padding-bottom:0"><div class="back" onclick="go('job1')">← Zpět na zakázku</div></div>
+    <div class="scr-body">
+      <h4 style="font-size:0.88rem;margin-bottom:4px">📷 Nahrát fotky</h4>
+      <div style="font-size:0.62rem;color:var(--muted);margin-bottom:14px">Vyfotografujte závadu z více úhlů</div>
+      <div class="photos" style="grid-template-columns:repeat(2,1fr);gap:8px">
+        <div class="ph" style="aspect-ratio:4/3;font-size:2rem">🔧</div>
+        <div class="ph" style="aspect-ratio:4/3;font-size:2rem">💧</div>
+        <div class="ph" style="aspect-ratio:4/3;font-size:2rem;border:2px dashed rgba(201,168,76,0.3);color:var(--gold)">📸</div>
+        <div class="ph" style="aspect-ratio:4/3;border:1px dashed rgba(255,255,255,0.1);color:#555;font-size:1.5rem">+</div>
+      </div>
+      <div style="font-size:0.55rem;color:var(--muted);margin:10px 0;text-align:center">Klikněte na 📸 pro pořízení nové fotky nebo + pro nahrání z galerie</div>
+      <div class="sec">Typ fotek</div>
+      <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+        <div style="padding:5px 12px;border-radius:20px;font-size:0.6rem;font-weight:700;background:rgba(201,168,76,0.12);color:var(--gold);border:1px solid rgba(201,168,76,0.3)">Před opravou</div>
+        <div style="padding:5px 12px;border-radius:20px;font-size:0.6rem;font-weight:600;color:var(--muted);border:1px solid rgba(255,255,255,0.08);cursor:pointer">Během opravy</div>
+        <div style="padding:5px 12px;border-radius:20px;font-size:0.6rem;font-weight:600;color:var(--muted);border:1px solid rgba(255,255,255,0.08);cursor:pointer">Po opravě</div>
+      </div>
+      <div class="btn" onclick="toast('📷 3 fotky nahrány');j1i++;renderJ1();setTimeout(function(){go('job1')},1200)">Nahrát fotky (3) →</div>
+    </div>
+  </div>
+
+  <!-- ═══════ DIAGNOSTIC CHOICE ═══════ -->
+  <div class="scr" id="s-diag-choice">
+    <div class="hdr" style="padding-bottom:0"><div class="back" onclick="go('job1')">← Zpět</div></div>
+    <div class="scr-body">
+      <h4 style="font-size:0.88rem;margin-bottom:4px">🔍 Diagnostika dokončena</h4>
+      <div style="font-size:0.62rem;color:var(--muted);margin-bottom:16px">Zvolte další postup</div>
+      <div class="c" style="padding:16px;cursor:pointer;border:1.5px solid rgba(201,168,76,0.25)" onclick="go('estimate')">
+        <div style="font-size:1.3rem;margin-bottom:6px">💰</div>
+        <h4 style="font-size:0.78rem;margin-bottom:4px">Odeslat cenový odhad</h4>
+        <p style="font-size:0.62rem">Vyplníte hodiny, materiál a odešlete ke schválení. Po schválení můžete začít opravu.</p>
+      </div>
+      <div class="c" style="padding:16px;cursor:pointer" onclick="go('protocol')">
+        <div style="font-size:1.3rem;margin-bottom:6px">📋</div>
+        <h4 style="font-size:0.78rem;margin-bottom:4px">Ukončit pouze diagnostikou</h4>
+        <p style="font-size:0.62rem">Oprava není potřeba nebo není možná. Vyplníte diagnostický protokol a zakázka se uzavře.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ PROTOCOL WIZARD ═══════ -->
+  <div class="scr" id="s-protocol">
+    <div class="hdr" style="padding-bottom:0"><div class="back" onclick="go('job1')">← Zpět</div><span style="font-size:0.6rem;color:var(--muted)">📋 Protokol · ZR-0847</span></div>
+    <div class="scr-body">
+      <div style="display:flex;gap:3px;margin-bottom:6px">
+        <div id="pw1" style="flex:1;height:3px;border-radius:2px;background:var(--gold)"></div>
+        <div id="pw2" style="flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,0.1)"></div>
+        <div id="pw3" style="flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,0.1)"></div>
+        <div id="pw4" style="flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,0.1)"></div>
+        <div id="pw5" style="flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,0.1)"></div>
+      </div>
+      <div id="pw-step-label" style="font-size:0.55rem;color:var(--muted);margin-bottom:10px;font-weight:600">Krok 1 z 5: Info o zakázce</div>
+
+      <!-- Protocol step 1: Info -->
+      <div id="pw-s1">
+        <div class="sec" style="margin-top:0">Zakázka</div>
+        <div class="c" style="padding:10px 12px">
+          <div class="row"><span>Reference</span><span class="v">ZR-2026-0847</span></div>
+          <div class="row"><span>Kategorie</span><span class="v">Instalace</span></div>
+          <div class="row"><span>Zákazník</span><span class="v">Jan Novák</span></div>
+          <div class="row"><span>Adresa</span><span class="v">Vinohradská 42, Praha 2</span></div>
+        </div>
+        <div class="sec">Typ protokolu</div>
+        <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:12px">
+          <div style="padding:8px 12px;border-radius:8px;font-size:0.65rem;font-weight:600;background:rgba(201,168,76,0.08);border:1.5px solid rgba(201,168,76,0.3);color:var(--gold)">✓ Standardní oprava</div>
+          <div style="padding:8px 12px;border-radius:8px;font-size:0.65rem;color:var(--muted);border:1px solid rgba(255,255,255,0.06)">S doplatkem</div>
+          <div style="padding:8px 12px;border-radius:8px;font-size:0.65rem;color:var(--muted);border:1px solid rgba(255,255,255,0.06)">Pouze diagnostika</div>
+        </div>
+        <div class="sec">Návštěva</div>
+        <div class="c" style="padding:10px 12px">
+          <div class="row"><span>Návštěva č.</span><span class="v">1</span></div>
+          <div class="row"><span>Příjezd</span><span class="v" style="color:#4ade80">9:12 (automaticky)</span></div>
+          <div class="row"><span>Odjezd</span><span class="v">11:45</span></div>
+        </div>
+      </div>
+
+      <!-- Protocol step 2: Work + Material -->
+      <div id="pw-s2" style="display:none">
+        <div class="sec" style="margin-top:0">🛠️ Popis práce</div>
+        <div class="c" style="padding:10px 12px">
+          <p style="color:#ede8df;font-size:0.65rem;line-height:1.5">Výměna kartušového ventilu baterie Grohe. Demontáž staré kartuše, montáž nové, kontrola těsnosti. Baterie funkční bez kapání.</p>
+          <div style="font-size:0.48rem;color:var(--gold);margin-top:4px">🎤 Diktováno hlasem</div>
+        </div>
+        <div class="sec">🔩 Materiál</div>
+        <div class="c" style="padding:8px 12px">
+          <div class="row"><span style="color:#ede8df;font-weight:600">Kartuše Grohe 46mm</span><span class="v">1 ks</span></div>
+          <div style="font-size:0.48rem;color:var(--muted);padding-bottom:3px">Náhradní díl</div>
+        </div>
+        <div class="c" style="padding:8px 12px">
+          <div class="row"><span style="color:#ede8df;font-weight:600">Těsnění</span><span class="v">2 ks</span></div>
+          <div style="font-size:0.48rem;color:var(--muted);padding-bottom:3px">Drobný materiál</div>
+        </div>
+        <div class="btn-o" style="border-style:dashed;font-size:0.6rem">+ Přidat materiál</div>
+      </div>
+
+      <!-- Protocol step 3: Photos -->
+      <div id="pw-s3" style="display:none">
+        <div class="sec" style="margin-top:0">📸 Fotodokumentace</div>
+        <div class="photos" style="grid-template-columns:repeat(3,1fr);gap:6px">
+          <div class="ph">🔧</div>
+          <div class="ph">💧</div>
+          <div class="ph">✅</div>
+        </div>
+        <div style="font-size:0.55rem;color:var(--muted);margin:8px 0;text-align:center">Před opravou (2) · Po opravě (1)</div>
+        <div class="btn-o" style="font-size:0.6rem">+ Přidat další fotky</div>
+      </div>
+
+      <!-- Protocol step 4: Checklist -->
+      <div id="pw-s4" style="display:none">
+        <div class="sec" style="margin-top:0">✅ Kontrolní seznam</div>
+        <div class="c" style="padding:10px 12px">
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:#4ade80">☑</span><span style="font-size:0.65rem">Popis práce vyplněn</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:#4ade80">☑</span><span style="font-size:0.65rem">Materiál zadán</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:#4ade80">☑</span><span style="font-size:0.65rem">Fotodokumentace přiložena</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 0"><span style="color:#4ade80">☑</span><span style="font-size:0.65rem">Váš podpis k dispozici</span></div>
+        </div>
+      </div>
+
+      <!-- Protocol step 5: Signature -->
+      <div id="pw-s5" style="display:none">
+        <div class="sec" style="margin-top:0">✍️ Podpis zákazníka</div>
+        <div style="font-size:0.62rem;color:var(--muted);margin-bottom:10px">Zákazník podepíše na vašem mobilu nebo přes portál</div>
+        <div class="c" style="padding:16px;text-align:center;cursor:pointer;border:1.5px solid rgba(201,168,76,0.25)" onclick="toast('✍️ Podpisový canvas otevřen')">
+          <div style="font-size:1.5rem;margin-bottom:6px">✍️</div>
+          <h4 style="font-size:0.72rem;margin-bottom:4px">Podepsat na tomto zařízení</h4>
+          <p style="font-size:0.58rem">Zákazník podepíše prstem na obrazovce</p>
+        </div>
+        <div class="c" style="padding:16px;text-align:center;cursor:pointer" onclick="toast('🔗 Odkaz odeslán zákazníkovi')">
+          <div style="font-size:1.5rem;margin-bottom:6px">🔗</div>
+          <h4 style="font-size:0.72rem;margin-bottom:4px">Odeslat odkaz na portál</h4>
+          <p style="font-size:0.58rem">Zákazník podepíše na svém zařízení přes odkaz</p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <div class="btn-o" id="pw-prev" onclick="protocolPrev()" style="flex:0.4;display:none">← Zpět</div>
+        <div class="btn" id="pw-next" onclick="protocolNext()" style="flex:1">Další krok →</div>
+      </div>
     </div>
   </div>
 
@@ -328,7 +471,8 @@ body{
           <span style="font-weight:800;color:var(--gold);font-size:0.72rem">Dle sazby</span>
         </div>
       </div>
-      <div class="btn" onclick="go('inv-choice')">🧾 Vystavit fakturu</div>
+      <div class="btn" onclick="toast('✅ Vyúčtování potvrzeno');j1i++;renderJ1();setTimeout(function(){go('job1')},1200)">✅ Potvrdit vyúčtování →</div>
+      <div class="btn-o" onclick="go('job1')">Zpět na zakázku</div>
     </div>
   </div>
 
@@ -531,7 +675,8 @@ function go(id){
   const main=Object.keys(tabMap).find(k=>id.startsWith(k)||id===k);
   if(main){const t=document.getElementById('t-'+main);if(t)t.classList.add('on')}
   if(id==='mpd')document.getElementById('t-mp').classList.add('on');
-  if(id==='job1'||id==='job2'||id==='notif'||id==='estimate')document.getElementById('t-home').classList.add('on');
+  if(id==='job1'||id==='job2'||id==='notif'||id==='estimate'||id==='photos'||id==='diag-choice'||id==='protocol')document.getElementById('t-home').classList.add('on');
+  if(id==='protocol'){pwStep=1;renderProtocol()}
   if(id==='job1')renderJ1();
   if(id==='settle'||id==='inv-choice'||id==='inv-form')document.getElementById('t-jobs').classList.add('on');
 }
@@ -539,28 +684,28 @@ function toast(m){const t=document.getElementById('toast');t.textContent=m;t.sty
 // Job 1 state machine — based on real smartButton.ts flow
 let j1i=0;
 var j1flow=[
-  // step 0: initial state (arrived, diagnostics)
-  {dots:[1,1,1,2,0,0,0,0],hl:3,btn:'📷 Nahrát fotky diagnostiky',icon:'📷',type:'primary',btn2:true,toast:null},
-  // step 1: photos done → estimate
-  {dots:[1,1,1,2,0,0,0,0],hl:3,btn:'💰 Odeslat odhad ceny',icon:'💰',type:'primary',btn2:false,toast:'📷 Fotky diagnostiky nahrány'},
+  // step 0: initial state (arrived, diagnostics) → opens photo screen
+  {dots:[1,1,1,2,0,0,0,0],hl:3,btn:'📷 Nahrát fotky diagnostiky',icon:'📷',type:'primary',btn2:true,toast:null,goTo:'photos'},
+  // step 1: photos done → diagnostic choice (estimate vs diagnostic-only)
+  {dots:[1,1,1,2,0,0,0,0],hl:3,btn:'💰 Odeslat odhad ceny',icon:'💰',type:'primary',btn2:false,toast:'📷 Fotky diagnostiky nahrány',goTo:'diag-choice'},
   // step 2: estimate submitted → waiting
   {dots:[1,1,1,2,0,0,0,0],hl:3,btn:'⏳ Čekám na schválení odhadu...',icon:'',type:'wait',btn2:false,toast:'💰 Odhad odeslán ke schválení',auto:2500},
   // step 3: estimate approved → start repair
   {dots:[1,1,1,1,2,0,0,0],hl:4,btn:'🔧 Začít opravu',icon:'🔧',type:'primary',btn2:false,toast:'✅ Odhad automaticky schválen'},
   // step 4: working → work done
   {dots:[1,1,1,1,2,0,0,0],hl:4,btn:'✅ Práce hotová',icon:'✅',type:'primary',btn2:false,toast:'🔧 Oprava zahájena'},
-  // step 5: work done → upload final photos
-  {dots:[1,1,1,1,1,2,0,0],hl:5,btn:'📷 Nahrát finální fotky',icon:'📷',type:'primary',btn2:false,toast:'✅ Práce dokončena'},
-  // step 6: photos done → finalize settlement
-  {dots:[1,1,1,1,1,2,0,0],hl:5,btn:'💰 Finalizovat vyúčtování',icon:'💰',type:'primary',btn2:false,toast:'📷 Finální fotky nahrány'},
+  // step 5: work done → upload final photos → opens photo screen
+  {dots:[1,1,1,1,1,2,0,0],hl:5,btn:'📷 Nahrát finální fotky',icon:'📷',type:'primary',btn2:false,toast:'✅ Práce dokončena',goTo:'photos'},
+  // step 6: photos done → finalize settlement → opens settlement screen
+  {dots:[1,1,1,1,1,2,0,0],hl:5,btn:'💰 Finalizovat vyúčtování',icon:'💰',type:'primary',btn2:false,toast:'📷 Finální fotky nahrány',goTo:'settle'},
   // step 7: settlement review
   {dots:[1,1,1,1,1,1,2,0],hl:6,btn:'✅ Potvrdit vyúčtování',icon:'✅',type:'primary',btn2:false,toast:'💰 Vyúčtování připraveno ke kontrole'},
-  // step 8: settlement approved → fill protocol
-  {dots:[1,1,1,1,1,1,2,0],hl:6,btn:'📋 Vyplnit finální protokol',icon:'📋',type:'primary',btn2:false,toast:'✅ Vyúčtování potvrzeno'},
+  // step 8: settlement approved → fill protocol → opens protocol wizard
+  {dots:[1,1,1,1,1,1,2,0],hl:6,btn:'📋 Vyplnit finální protokol',icon:'📋',type:'primary',btn2:false,toast:'✅ Vyúčtování potvrzeno',goTo:'protocol'},
   // step 9: protocol sent → waiting for client signature
   {dots:[1,1,1,1,1,1,2,0],hl:6,btn:'⏳ Čekám na podpis klienta...',icon:'',type:'wait',btn2:false,toast:'📋 Protokol odeslán klientovi k podpisu',auto:2500},
-  // step 10: signed → view settlement + invoice
-  {dots:[1,1,1,1,1,1,1,2],hl:7,btn:'🧾 Vystavit fakturu',icon:'🧾',type:'primary',btn2:false,toast:'✍️ Klient podepsal protokol'},
+  // step 10: signed → view settlement + invoice → opens invoice choice
+  {dots:[1,1,1,1,1,1,1,2],hl:7,btn:'🧾 Vystavit fakturu',icon:'🧾',type:'primary',btn2:false,toast:'✍️ Klient podepsal protokol',goTo:'inv-choice'},
   // step 11: invoice done → go to settlement screen
   {dots:[1,1,1,1,1,1,1,1],hl:7,btn:'✅ Zakázka dokončena',icon:'✅',type:'done',btn2:false,toast:'🧾 Faktura vygenerována'},
 ];
@@ -583,6 +728,13 @@ function renderJ1(){
 }
 function advanceJob1(){
   if(j1i>=j1flow.length-1)return;
+  // Check if current step wants to navigate to a sub-screen first
+  var cur=j1flow[j1i];
+  if(cur.goTo && !cur._visited){
+    cur._visited=true;
+    go(cur.goTo);
+    return;
+  }
   j1i++;
   var s=j1flow[j1i];
   if(s.toast)toast(s.toast);
@@ -616,6 +768,28 @@ function advanceJob2(){
   else if(s.type==='wait'){el.onclick=null}
   else{el.onclick=advanceJob2}
   if(s.auto){setTimeout(function(){if(j2i<j2flow.length-1){j2i++;var ns=j2flow[j2i];if(ns.toast)toast(ns.toast);var e=document.getElementById('j2-btn');e.textContent=ns.btn;e.className='btn';e.onclick=advanceJob2}},s.auto)}
+}
+
+// Protocol wizard
+var pwStep=1;
+var pwLabels=['Info o zakázce','Práce + materiál','Fotodokumentace','Kontrolní seznam','Podpis zákazníka'];
+function renderProtocol(){
+  for(var i=1;i<=5;i++){
+    document.getElementById('pw'+i).style.background=i<=pwStep?'var(--gold)':'rgba(255,255,255,0.1)';
+    var el=document.getElementById('pw-s'+i);
+    if(el)el.style.display=i===pwStep?'':'none';
+  }
+  document.getElementById('pw-step-label').textContent='Krok '+pwStep+' z 5: '+pwLabels[pwStep-1];
+  document.getElementById('pw-prev').style.display=pwStep>1?'':'none';
+  document.getElementById('pw-next').textContent=pwStep===5?'✍️ Odeslat protokol':'Další krok →';
+}
+function protocolNext(){
+  if(pwStep>=5){toast('📋 Protokol odeslán! Čekám na podpis klienta...');j1i++;renderJ1();pwStep=1;setTimeout(function(){go('job1')},1500);return}
+  pwStep++;renderProtocol();
+}
+function protocolPrev(){
+  if(pwStep<=1)return;
+  pwStep--;renderProtocol();
 }
 
 function showJobTab(which){
